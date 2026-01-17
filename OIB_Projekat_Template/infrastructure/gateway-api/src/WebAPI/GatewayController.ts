@@ -1,9 +1,11 @@
+import { UserRole } from "../Domain/enums/UserRole";
 import { Request, Response, Router } from "express";
 import { IGatewayService } from "../Domain/services/IGatewayService";
 import { LoginUserDTO } from "../Domain/DTOs/LoginUserDTO";
 import { RegistrationUserDTO } from "../Domain/DTOs/RegistrationUserDTO";
 import { authenticate } from "../Middlewares/authentification/AuthMiddleware";
 import { authorize } from "../Middlewares/authorization/AuthorizeMiddleware";
+
 
 export class GatewayController {
   private readonly router: Router;
@@ -17,10 +19,11 @@ export class GatewayController {
     // Auth
     this.router.post("/login", this.login.bind(this));
     this.router.post("/register", this.register.bind(this));
-
+    
+ 
     // Users
-    this.router.get("/users", authenticate, authorize("admin"), this.getAllUsers.bind(this));
-    this.router.get("/users/:id", authenticate, authorize("admin", "seller"), this.getUserById.bind(this));
+    this.router.get("/users", authenticate, authorize(UserRole.ADMIN , UserRole.SALES_MANAGER), this.getAllUsers.bind(this));
+    this.router.get("/users/:id", authenticate, authorize(UserRole.ADMIN,UserRole.SALES_MANAGER, UserRole.SELLER), this.getUserById.bind(this));
   }
 
   // Auth
@@ -48,14 +51,24 @@ export class GatewayController {
 
   private async getUserById(req: Request, res: Response): Promise<void> {
     try {
-      const id = parseInt(req.params.id, 10);
-      if (!req.user || req.user.id !== id) {
-        res.status(401).json({ message: "You can only access your own data!" });
+      const id = Number(req.params.id);
+      const loggedUser = req.user;
+
+      if(!loggedUser) {
+        res.status(401).json({ message: "Unauthorized" });
+        return;
+      }
+      if (
+        loggedUser.role === UserRole.SELLER &&
+        loggedUser.id !== id
+      ) {
+        res.status(403).json({ message: "Access denied" });
         return;
       }
 
       const user = await this.gatewayService.getUserById(id);
       res.status(200).json(user);
+      
     } catch (err) {
       res.status(404).json({ message: (err as Error).message });
     }

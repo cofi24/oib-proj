@@ -4,6 +4,9 @@ import { LoginUserDTO } from "../Domain/DTOs/LoginUserDTO";
 import { RegistrationUserDTO } from "../Domain/DTOs/RegistrationUserDTO";
 import { AuthResponseType } from "../Domain/types/AuthResponse";
 import { UserDTO } from "../Domain/DTOs/UserDTO";
+import { CreateUserDTO } from "../Domain/DTOs/CreateUserDTO";
+import { UpdateUserDTO } from "../Domain/DTOs/UpdateUserDTO";
+
 
 export class GatewayService implements IGatewayService {
   private readonly authClient: AxiosInstance;
@@ -59,4 +62,19 @@ export class GatewayService implements IGatewayService {
   }
 
   // TODO: ADD MORE API CALLS
+
+    async createUser(data: CreateUserDTO) {
+    const res = await this.userClient.post<UserDTO>("/users", data);
+    return res.data;
+  }
+
+  async updateUser(id: number, data: UpdateUserDTO) {
+    const res = await this.userClient.put<UserDTO>(`/users/${id}`, data);
+    return res.data;
+  }
+
+  async deleteUser(id: number) {
+    await this.userClient.delete(`/users/${id}`);
+  }
+
 }

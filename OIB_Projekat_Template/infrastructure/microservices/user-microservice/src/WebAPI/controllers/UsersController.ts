@@ -31,7 +31,8 @@ export class UsersController {
 
   private async getUserById(req: Request, res: Response): Promise<void> {
     try {
-      const id = parseInt(req.params.id, 10);
+      const id = Number(req.params.id);
+
       this.logger.log(`Fetching user with ID ${id}`);
       const user = await this.usersService.getUserById(id);
       res.status(200).json(user);

@@ -15,6 +15,13 @@ export class User {
   @Column({ type: "varchar", length: 255 })
   password!: string;
 
+  @Column({ nullable: true })
+  firstName?: string;
+
+  @Column({ nullable: true })
+  lastName?: string;
+
+
   @Column({ type: "varchar", length: 255, unique: true })
   email!: string;
 
