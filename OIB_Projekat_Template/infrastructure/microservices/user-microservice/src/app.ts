@@ -41,6 +41,6 @@ const logerService: ILogerService = new LogerService();
 const userController = new UsersController(userService, logerService);
 
 // Registering routes
-app.use('/api/v1', userController.getRouter());
+app.use('/api/v1/users', userController.getRouter());
 
 export default app;

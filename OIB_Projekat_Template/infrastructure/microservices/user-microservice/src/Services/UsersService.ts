@@ -30,8 +30,7 @@ export class UsersService implements IUsersService {
       username: data.username,
       email: data.email,
       role: data.role,
-      firstName: data.firstName,
-      lastName: data.lastName,
+      
       profileImage: data.profileImage,
     });
 
@@ -40,13 +39,18 @@ export class UsersService implements IUsersService {
   }
 
   async updateUser(id: number, data: UpdateUserDTO): Promise<UserDTO> {
-    const user = await this.userRepository.findOne({ where: { id } });
-    if (!user) throw new Error(`User with ID ${id} not found`);
+  const user = await this.userRepository.findOne({ where: { id } });
+  if (!user) throw new Error(`User with ID ${id} not found`);
 
-    Object.assign(user, data);
-    const saved = await this.userRepository.save(user);
-    return this.toDTO(saved);
-  }
+  if (data.username !== undefined) user.username = data.username;
+  if (data.email !== undefined) user.email = data.email;
+  if (data.role !== undefined) user.role = data.role;
+  if (data.profileImage !== undefined) user.profileImage = data.profileImage;
+
+  const saved = await this.userRepository.save(user);
+  return this.toDTO(saved);
+}
+
 
   async deleteUser(id: number): Promise<void> {
     const result = await this.userRepository.delete(id);

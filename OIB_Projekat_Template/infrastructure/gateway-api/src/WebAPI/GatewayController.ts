@@ -24,6 +24,29 @@ export class GatewayController {
     // Users
     this.router.get("/users", authenticate, authorize(UserRole.ADMIN , UserRole.SALES_MANAGER), this.getAllUsers.bind(this));
     this.router.get("/users/:id", authenticate, authorize(UserRole.ADMIN,UserRole.SALES_MANAGER, UserRole.SELLER), this.getUserById.bind(this));
+    
+    this.router.post(
+      "/users",
+      authenticate,
+      authorize(UserRole.ADMIN),
+      this.createUser.bind(this)
+    );
+
+     this.router.put(
+      "/users/:id",
+      authenticate,
+      authorize(UserRole.ADMIN, UserRole.SALES_MANAGER, UserRole.SELLER),
+      this.updateUser.bind(this)
+    );
+
+    this.router.delete(
+      "/users/:id",
+      authenticate,
+      authorize(UserRole.ADMIN),
+      this.deleteUser.bind(this)
+    );
+
+    
   }
 
   // Auth
@@ -69,6 +92,47 @@ export class GatewayController {
       const user = await this.gatewayService.getUserById(id);
       res.status(200).json(user);
       
+    } catch (err) {
+      res.status(404).json({ message: (err as Error).message });
+    }
+  }
+
+  private async createUser(req: Request, res: Response): Promise<void> {
+  try {
+    const user = await this.gatewayService.createUser(req.body);
+    res.status(201).json(user);
+  } catch (err) {
+    res.status(500).json({ message: (err as Error).message });
+  }
+  }
+   private async updateUser(req: Request, res: Response): Promise<void> {
+    try {
+      const id = Number(req.params.id);
+      const loggedUser = req.user;
+
+      if (!loggedUser) {
+        res.status(401).json({ message: "Unauthorized" });
+        return;
+      }
+
+      // SELLER može samo sebe
+      if (loggedUser.role === UserRole.SELLER && loggedUser.id !== id) {
+        res.status(403).json({ message: "Access denied" });
+        return;
+      }
+
+      const user = await this.gatewayService.updateUser(id, req.body);
+      res.status(200).json(user);
+    } catch (err) {
+      res.status(404).json({ message: (err as Error).message });
+    }
+  }
+
+  private async deleteUser(req: Request, res: Response): Promise<void> {
+    try {
+      const id = Number(req.params.id);
+      await this.gatewayService.deleteUser(id);
+      res.status(204).send();
     } catch (err) {
       res.status(404).json({ message: (err as Error).message });
     }
