@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  storage-mysql:
+    image: mysql:8.0
+    container_name: oib-storage-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: storage_db
+    ports:
+      - "5002:3306"
+    volumes:
+      - storage_mysql_data:/var/lib/mysql
+
+volumes:
+  storage_mysql_data:
