@@ -6,13 +6,16 @@ import { initialize_database } from "./Database/InitializeConnection";
 import { StorageService } from "./Services/StorageService";
 import { LogerService } from "./Services/LogerService";
 import { StorageController } from "./WebAPI/controllers/StorageController";
+import { PackagingRepository } from "./Services/repositories/PackagingRepository";
+
+
 
 
 dotenv.config({ quiet: true });
 
 const app = express();
 
-// Read CORS settings from environment
+// MIDDLEWARE
 const corsOrigin = process.env.CORS_ORIGIN ?? "*";
 const corsMethods =
   process.env.CORS_METHODS?.split(",").map((m) => m.trim()) ?? ["POST", "GET"];
@@ -26,14 +29,18 @@ app.use(
 
 app.use(express.json());
 
-// Initialize DB connection (TypeORM)
+// DATABASE INITIALIZATION
 initialize_database();
 
-const storageService = new StorageService();
+// DEPENDENCY INJECTION
+const packagingRepo = new PackagingRepository();
+const storageService = new StorageService(packagingRepo);
 const logerService = new LogerService();
 
+// CONTROLLERS
 const storageController = new StorageController(storageService, logerService);
 
+// ROUTES
 app.use("/api/v1/storage", storageController.getRouter());
 
 

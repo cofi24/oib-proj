@@ -3,16 +3,16 @@ import { UserRole } from "../Domain/enums/UserRole";
 import { IStorageStrategy } from "../Domain/services/IStorageStrategy";
 import { DistributionCenterStrategy } from "./strategies/DistributionCenterStrategy";
 import { WarehouseCenterStrategy } from "./strategies/WarehouseCenterStrategy";
+import { IPackagingRepository } from "../Domain/services/IPackagingRepository";
 
 function sleep(ms: number) {
   return new Promise<void>((resolve) => setTimeout(resolve, ms));
 }
 
 export class StorageService implements IStorageService {
+  constructor(private readonly packagingRepo: IPackagingRepository) {}
+
   private resolveStrategy(role: UserRole): IStorageStrategy {
-    // Pravilo:
-    // ADMIN i SALES_MANAGER -> distributivni
-    // SELLER -> magacinski
     if (role === UserRole.ADMIN || role === UserRole.SALES_MANAGER) {
       return new DistributionCenterStrategy();
     }
@@ -31,6 +31,11 @@ export class StorageService implements IStorageService {
       throw new Error(`Too many packages requested. Max allowed is ${maxAllowed}.`);
     }
 
+    // U ovom projektu (za sada) trošimo samo BOX.
+    // Kasnije lako proširimo da troši više tipova (BOX/BAG/WRAP).
+    await this.packagingRepo.decreasePackaging("BOX", amount);
+
+    // Simulacija slanja radi nakon DB commit-a (ne držimo lock tokom sleep-a)
     await sleep(strategy.getDispatchDelayMs());
 
     return {
