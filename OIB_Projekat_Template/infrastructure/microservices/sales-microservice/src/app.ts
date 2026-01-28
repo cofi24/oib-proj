@@ -6,6 +6,8 @@ import { ProductRepository } from "./Services/repositories/ProductRepository";
 import { SalesService } from "./Services/SalesService";
 import { SalesController } from "./WebAPI/controllers/SalesController";
 import { initialize_database } from "./Database/InitializeConnection";
+import { StorageClient } from "./Services/clients/StorageClient";
+import { AnalyticsClient } from "./Services/clients/AnalyticsClient";
 
 dotenv.config({ quiet: true });
 
@@ -30,7 +32,13 @@ initialize_database();
 
 // DEPENDENCY INJECTION
 const productRepo = new ProductRepository();
-const salesService = new SalesService(productRepo);
+const storageBaseUrl = process.env.STORAGE_BASE_URL ?? "http://localhost:5555";
+const analyticsBaseUrl = process.env.ANALYTICS_BASE_URL ?? "http://localhost:5557";
+
+const storageClient = new StorageClient(storageBaseUrl);
+const analyticsClient = new AnalyticsClient(analyticsBaseUrl);
+
+const salesService = new SalesService(productRepo, storageClient, analyticsClient);
 
 // CONTROLLERS
 const salesController = new SalesController(salesService);
