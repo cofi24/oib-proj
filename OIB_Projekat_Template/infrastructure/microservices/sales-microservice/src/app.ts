@@ -1,0 +1,46 @@
+import express from "express";
+import cors from "cors";
+import "reflect-metadata";
+import dotenv from "dotenv";
+import { ProductRepository } from "./Services/repositories/ProductRepository";
+import { SalesService } from "./Services/SalesService";
+import { SalesController } from "./WebAPI/controllers/SalesController";
+import { initialize_database } from "./Database/InitializeConnection";
+
+dotenv.config({ quiet: true });
+
+const app = express();
+
+// MIDDLEWARE
+const corsOrigin = process.env.CORS_ORIGIN ?? "*";
+const corsMethods =
+  process.env.CORS_METHODS?.split(",").map((m) => m.trim()) ?? ["POST", "GET"];
+
+app.use(
+  cors({
+    origin: corsOrigin,
+    methods: corsMethods,
+  })
+);
+
+app.use(express.json());
+
+// DATABASE INITIALIZATION
+initialize_database();
+
+// DEPENDENCY INJECTION
+const productRepo = new ProductRepository();
+const salesService = new SalesService(productRepo);
+
+// CONTROLLERS
+const salesController = new SalesController(salesService);
+
+// ROUTES
+app.use("/api/v1/sales", salesController.getRouter());
+
+// HEALTH CHECK
+app.get("/api/v1/health", (_, res) => {
+  res.status(200).json({ status: "ok", service: "sales-service" });
+});
+
+export default app;
