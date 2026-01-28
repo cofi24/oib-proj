@@ -5,6 +5,7 @@ import { IAuthService } from "../Domain/services/IAuthService";
 import { LoginUserDTO } from "../Domain/DTOs/LoginUserDTO";
 import { RegistrationUserDTO } from "../Domain/DTOs/RegistrationUserDTO";
 import { AuthResponseType } from "../Domain/types/AuthResponse";
+import { UserRole } from "../Domain/enums/UserRole";
 
 export class AuthService implements IAuthService {
   private readonly saltRounds: number = parseInt(process.env.SALT_ROUNDS || "10", 10);
@@ -15,8 +16,9 @@ export class AuthService implements IAuthService {
    * Login user
    */
   async login(data: LoginUserDTO): Promise<AuthResponseType> {
-    const user = await this.userRepository.findOne({ where: { username: data.username } });
-    if (!user) return { authenificated: false };
+    const user = await this.userRepository.findOne({ where: 
+      { username: data.username } });
+    if (!user || !user.password) return { authenificated: false };
 
     const passwordMatches = await bcrypt.compare(data.password, user.password);
     if (!passwordMatches) return { authenificated: false };
@@ -36,6 +38,10 @@ export class AuthService implements IAuthService {
    */
   async register(data: RegistrationUserDTO): Promise<AuthResponseType> {
     // Check if username or email already exists
+    if (!data.password) {
+      
+      return { authenificated: false };
+    }
     const existingUser = await this.userRepository.findOne({
       where: [{ username: data.username }, { email: data.email }],
     });
@@ -49,6 +55,8 @@ export class AuthService implements IAuthService {
       email: data.email,
       role: data.role,
       password: hashedPassword,
+      firstName: data.firstName ?? null,
+      lastName: data.lastName ?? null,
       profileImage: data.profileImage ?? null,
     });
 
