@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  sales-mysql:
+    image: mysql:8.0
+    container_name: oib-sales-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: sales_db
+    ports:
+      - "5003:3306"
+    volumes:
+      - sales_mysql_data:/var/lib/mysql
+
+volumes:
+  sales_mysql_data:
