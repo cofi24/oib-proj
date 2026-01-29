@@ -2,9 +2,22 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
-import { IGatewayService } from './Domain/services/IGatewayService';
-import { GatewayService } from './Services/GatewayService';
-import { GatewayController } from './WebAPI/GatewayController';
+//user, auth, audit imports
+import { IAuditGateService } from './Domain/services/IAuditGateService';
+import { IAuthGateService } from './Domain/services/IAuthGateService';
+import { IUserGateService } from './Domain/services/IUserGateService';
+import { UserGatewayService } from './Services/UserServices/UserGateService';
+import { AuditGateService } from './Services/AuditService/AuditGateService';
+import { AuthGateService } from './Services/AuthService/AuthGateService';
+import { AuditController } from './WebAPI/AuditControllers/AuditGateController';
+import { AuthGateController } from './WebAPI/AuthControllers/AuthGateController';
+import { UserGateController } from './WebAPI/UserControllers/UserGateController';
+//analytics imports
+import { AnalyticsGateService } from './Services/AnalyticsServices/AnalyticsGateService';
+import { IAnalyticsGateService } from './Domain/services/IAnalyticsGateService';
+import { AnalyticsGateController } from './WebAPI/AnalyticsControllers/AnalyticsGateController';
+
+
 
 dotenv.config({ quiet: true });
 
@@ -23,12 +36,26 @@ app.use(cors({
 app.use(express.json());
 
 // Services
-const gatewayService: IGatewayService = new GatewayService();
 
-// WebAPI routes
-const gatewayController = new GatewayController(gatewayService);
+const userService: IUserGateService = new UserGatewayService();
+const authService: IAuthGateService = new AuthGateService();
+const auditService: IAuditGateService = new AuditGateService();
+const analyticsService: IAnalyticsGateService = new AnalyticsGateService();
 
-// Registering routes
-app.use('/api/v1', gatewayController.getRouter());
+// Controllers
+const userController = new UserGateController(userService);
+const authController = new AuthGateController(authService);
+const auditController = new AuditController(auditService);
+const analyticsController = new AnalyticsGateController(analyticsService);
+
+// Registering analytics controller
+app.use('/api/v1', analyticsController.getRouter());
+
+// Registering individual controllers
+app.use('/api/v1', userController.getRouter());
+app.use('/api/v1', authController.getRouter());
+app.use('/api/v1', auditController.getRouter());
+
+
 
 export default app;
