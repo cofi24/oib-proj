@@ -16,6 +16,10 @@ import { UserGateController } from './WebAPI/UserControllers/UserGateController'
 import { AnalyticsGateService } from './Services/AnalyticsServices/AnalyticsGateService';
 import { IAnalyticsGateService } from './Domain/services/IAnalyticsGateService';
 import { AnalyticsGateController } from './WebAPI/AnalyticsControllers/AnalyticsGateController';
+//performance imports
+import { IPerformanceGateService } from './Domain/services/IPerformanceGateService';
+import { PerformanceGateService } from './Services/PerformanceService/PerformanceGateService';
+import { PerformanceGateController } from './WebAPI/PerformanceControllers/PerformanceGateController';  
 
 
 
@@ -41,20 +45,27 @@ const userService: IUserGateService = new UserGatewayService();
 const authService: IAuthGateService = new AuthGateService();
 const auditService: IAuditGateService = new AuditGateService();
 const analyticsService: IAnalyticsGateService = new AnalyticsGateService();
+const performanceService: IPerformanceGateService = new PerformanceGateService();
+
 
 // Controllers
 const userController = new UserGateController(userService);
 const authController = new AuthGateController(authService);
 const auditController = new AuditController(auditService);
 const analyticsController = new AnalyticsGateController(analyticsService);
+const performanceController = new PerformanceGateController(performanceService);
 
-// Registering analytics controller
-app.use('/api/v1', analyticsController.getRouter());
+
+
 
 // Registering individual controllers
 app.use('/api/v1', userController.getRouter());
 app.use('/api/v1', authController.getRouter());
 app.use('/api/v1', auditController.getRouter());
+// Registering analytics controller
+app.use('/api/v1', analyticsController.getRouter());
+// Registering performance controller
+app.use('/api/v1', performanceController.getRouter());
 
 
 
