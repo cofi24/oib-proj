@@ -1,0 +1,6 @@
+CREATE DATABASE sales_db;
+CREATE DATABASE analytics_db;
+CREATE DATABASE performance_reports_db;
+CREATE DATABASE users_db;
+CREATE DATABASE storage_db;
+CREATE DATABASE audit_logs_db;

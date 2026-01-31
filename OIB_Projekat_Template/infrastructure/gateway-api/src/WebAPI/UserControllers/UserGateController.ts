@@ -28,6 +28,26 @@ export class UserGateController {
       authorize(UserRole.ADMIN, UserRole.SELLER, UserRole.SALES_MANAGER), 
       this.getUserById.bind(this)
     );
+    this.router.post(
+    "/users",
+    authenticate,
+    authorize(UserRole.ADMIN),
+    this.createUser.bind(this)
+  );
+
+  this.router.put(
+    "/users/:id",
+    authenticate,
+    authorize(UserRole.ADMIN),
+    this.updateUser.bind(this)
+  );
+
+  this.router.delete(
+    "/users/:id",
+    authenticate,
+    authorize(UserRole.ADMIN),
+    this.deleteUser.bind(this)
+  );
   }
   
   private async getAllUsers(req: Request, res: Response): Promise<void> {
@@ -71,6 +91,45 @@ export class UserGateController {
       });
     }
   }
+  private async createUser(req: Request, res: Response): Promise<void> {
+  try {
+    const user = await this.userService.createUser(req.body);
+    res.status(201).json(user);
+  } catch (err) {
+    console.error("Create user error:", err);
+    res.status(500).json({
+      message: (err as Error).message
+    });
+  }
+}
+
+
+
+ private async updateUser(req: Request, res: Response): Promise<void> {
+  try {
+    const id = Number(req.params.id);
+    const user = await this.userService.updateUser(id, req.body);
+    res.status(200).json(user);
+  } catch (err) {
+    console.error("Update user error:", err);
+    res.status(500).json({
+      message: (err as Error).message
+    });
+  }
+}
+
+  private async deleteUser(req: Request, res: Response): Promise<void> {
+  try {
+    const id = Number(req.params.id);
+    await this.userService.deleteUser(id);
+    res.status(204).send();
+  } catch (err) {
+    console.error("Delete user error:", err);
+    res.status(500).json({
+      message: (err as Error).message
+    });
+  }
+}
 
   public getRouter(): Router {
     return this.router;

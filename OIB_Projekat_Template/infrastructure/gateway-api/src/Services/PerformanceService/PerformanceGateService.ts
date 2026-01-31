@@ -53,6 +53,8 @@ export class PerformanceGateService implements IPerformanceGateService {
     
    async runSimulation(algorithmName: string, headers: Record<string, string>): Promise<any> {
     if (!this.performanceClient) throw new Error("PERFORMANCE_URL not configured");
+    
+
     try {
       const resp = await this.performanceClient.post("/simulate", { algorithmName }, { headers });
       return resp.data;

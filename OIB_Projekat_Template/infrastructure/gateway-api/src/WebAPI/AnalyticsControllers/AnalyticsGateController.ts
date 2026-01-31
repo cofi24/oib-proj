@@ -11,7 +11,7 @@ export class AnalyticsGateController {
   }
 
   private initRoutes() {
-    console.log("[AnalyticsGatewayController] Initializing routes...");
+    
     
     
     this.router.post("/reports", authenticate, this.createReport);

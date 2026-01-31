@@ -5,7 +5,7 @@ import { AuditLogType } from "../Domain/enums/AuditLogType";
 export class AuditingService implements IAuditingService {
 
   private readonly auditUrl =
-    process.env.AUDIT_SERVICE_URL ?? "http://localhost:5545/api/v1/audit";
+    process.env.AUDIT_SERVICE_URL ?? "http://localhost:5566/api/v1/audit";
 
   async log(level: AuditLogType, message: string): Promise<boolean> {
     try {

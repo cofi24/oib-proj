@@ -20,7 +20,14 @@ import { AnalyticsGateController } from './WebAPI/AnalyticsControllers/Analytics
 import { IPerformanceGateService } from './Domain/services/IPerformanceGateService';
 import { PerformanceGateService } from './Services/PerformanceService/PerformanceGateService';
 import { PerformanceGateController } from './WebAPI/PerformanceControllers/PerformanceGateController';  
-
+//sales imports
+import { ISalesGateService } from './Domain/services/ISalesGateService';
+import { SalesGateService } from './Services/SalesService/SalesGateService';
+import { SalesGateController } from './WebAPI/SalesControllers/SalesGateController';
+//storage imports
+import { IStorageGateService } from './Domain/services/IStorageGateService';
+import { StorageGateService } from './Services/StorageService/StorageGateService';
+import { StorageGateController } from './WebAPI/StorageControllers/StorageGateControllers';
 
 
 dotenv.config({ quiet: true });
@@ -46,6 +53,8 @@ const authService: IAuthGateService = new AuthGateService();
 const auditService: IAuditGateService = new AuditGateService();
 const analyticsService: IAnalyticsGateService = new AnalyticsGateService();
 const performanceService: IPerformanceGateService = new PerformanceGateService();
+const salesService: ISalesGateService = new SalesGateService();
+const storageService: IStorageGateService = new StorageGateService();
 
 
 // Controllers
@@ -54,8 +63,8 @@ const authController = new AuthGateController(authService);
 const auditController = new AuditController(auditService);
 const analyticsController = new AnalyticsGateController(analyticsService);
 const performanceController = new PerformanceGateController(performanceService);
-
-
+const salesController = new SalesGateController(salesService);
+const storageController = new StorageGateController(storageService);
 
 
 // Registering individual controllers
@@ -63,10 +72,12 @@ app.use('/api/v1', userController.getRouter());
 app.use('/api/v1', authController.getRouter());
 app.use('/api/v1', auditController.getRouter());
 // Registering analytics controller
-app.use('/api/v1', analyticsController.getRouter());
+app.use('/api/v1/analytics', analyticsController.getRouter());
 // Registering performance controller
 app.use('/api/v1', performanceController.getRouter());
-
-
+//sales controller
+app.use('/api/v1', salesController.getRouter());
+//storage controller
+app.use('/api/v1', storageController.getRouter());
 
 export default app;

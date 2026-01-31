@@ -5,11 +5,15 @@ import { UserDTO } from "../Domain/DTOs/UserDTO";
 import { CreateUserDTO } from "../Domain/DTOs/CreateUserDTO";
 import { UpdateUserDTO } from "../Domain/DTOs/UpdateUserDTO";
 import bcrypt from "bcryptjs";
+import { IAuditingService } from "../Domain/services/IAuditingService";
+import { AuditLogType } from "../Domain/enums/AuditLogType";
 
 export class UsersService implements IUsersService {
   private readonly saltRounds = 10;
 
-  constructor(private userRepository: Repository<User>) {}
+  constructor(private userRepository: Repository<User>,
+    private auditingService:IAuditingService
+  ) {}
 
   /**
    * Get all users
@@ -55,7 +59,10 @@ export class UsersService implements IUsersService {
     });
 
     const saved = await this.userRepository.save(user);
-
+    await this.auditingService.log(
+      AuditLogType.INFO,
+      `User created: ${saved.username} (id=${saved.id})`
+    );
      
     return this.toDTO(saved);
   }catch (error) {
@@ -79,12 +86,20 @@ export class UsersService implements IUsersService {
         user.password = await bcrypt.hash(data.password, this.saltRounds);
        }
   const saved = await this.userRepository.save(user);
+  await this.auditingService.log(
+      AuditLogType.INFO,
+      `User updated: id=${saved.id}`
+    );
   return this.toDTO(saved);
 }
 
 
   async deleteUser(id: number): Promise<void> {
     const result = await this.userRepository.delete(id);
+     await this.auditingService.log(
+      AuditLogType.INFO,
+      `User deleted: id=${id}`
+    );
     if (!result.affected) {
       throw new Error(`User with ID ${id} not found`);
     }
