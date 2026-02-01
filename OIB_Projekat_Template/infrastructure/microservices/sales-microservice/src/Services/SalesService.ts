@@ -37,7 +37,7 @@ async buy(userRole: string, request: BuyRequestDTO): Promise<ReceiptResponse> {
   if (!request.saleType || !request.paymentMethod) {
     throw new Error("saleType and paymentMethod are required.");
   }
-
+  
   // 1) rezerviši / umanji stanje i dobiješ proizvode (sa cenom/nazivom)
   const updatedProducts = await this.productRepo.reserveProducts(request.items);
 
@@ -74,6 +74,7 @@ async buy(userRole: string, request: BuyRequestDTO): Promise<ReceiptResponse> {
 
     return receipt;
   } catch (err) {
+    console.error("BUY FAILED - STORAGE or ANALYTICS ERROR:", err);
     await this.productRepo.restoreProducts(request.items);
     throw err;
   }

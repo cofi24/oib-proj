@@ -1,6 +1,9 @@
 import { Request, Response, Router } from "express";
 import { IUsersService } from "../../Domain/services/IUsersService";
 import { ILogerService } from "../../Domain/services/ILogerService";
+import { CreateUserDTO } from "../../Domain/DTOs/CreateUserDTO";
+import { UpdateUserDTO } from "../../Domain/DTOs/UpdateUserDTO";  
+
 
 export class UsersController {
   private readonly router: Router;
@@ -41,12 +44,18 @@ export class UsersController {
     res.status(200).json(user);
   }
 
-  private async create(req: Request, res: Response) {
-    const user = await this.usersService.createUser(req.body);
-    res.status(201).json(user);
+  private async create(req: Request, res: Response): Promise<void> {
+    try {
+      const data: CreateUserDTO = req.body;
+      const user = await this.usersService.createUser(data);
+      res.status(201).json(user);
+    } catch (err) {
+      this.logerService.log((err as Error).message);
+      res.status(400).json({ message: (err as Error).message });
+    }
   }
 
-  private async update(req: Request, res: Response) {
+  private async update(req: Request, res: Response): Promise<void> {
     const id = Number(req.params.id);
 
     if (isNaN(id)) {
@@ -58,7 +67,7 @@ export class UsersController {
     res.status(200).json(user);
   }
 
-  private async delete(req: Request, res: Response) {
+  private async delete(req: Request, res: Response): Promise<void> {
     const id = Number(req.params.id);
 
     if (isNaN(id)) {

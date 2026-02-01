@@ -1,8 +1,13 @@
 import { UserRole } from "../enums/UserRole";
 
 export type UpdateUserDTO = {
-  username?: string;
-  email?: string;
+   email?: string;
+  password?: string;
+
+  firstName?: string;
+  lastName?: string;
+
+  profileImage?: string;
+
   role?: UserRole;
-  profileImage?: string | null;
 };
