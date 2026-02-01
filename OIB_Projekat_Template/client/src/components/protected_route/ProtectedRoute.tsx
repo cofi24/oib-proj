@@ -13,12 +13,9 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   requiredRole,
   redirectTo = "/",
 }) => {
-  const { isAuthenticated, user, isLoading, logout } = useAuth();
+  const { isAuthenticated, user, isLoading} = useAuth();
   const location = useLocation();
 
-  const handleLogout = () => {
-    logout();
-  };
 
   if (isLoading) {
     return (
@@ -58,13 +55,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
               </svg>
             </div>
             <span className="titlebar-title">Access Denied</span>
-            <div className="titlebar-controls">
-              <button className="titlebar-btn close" onClick={handleLogout} aria-label="Close">
-                <svg width="10" height="10" viewBox="0 0 10 10">
-                  <path d="M0 0L10 10M10 0L0 10" stroke="currentColor" strokeWidth="1" />
-                </svg>
-              </button>
-            </div>
+           
           </div>
           <div className="window-content">
             <div className="flex flex-col items-center text-center gap-4">
@@ -77,8 +68,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
               <p>
                 You need the <strong>"{requiredRole}"</strong> role to access this page.
               </p>
-              <button className="btn btn-accent" onClick={handleLogout}>
-                Logout
+              <button className="btn btn-accent" onClick={() => window.history.back()}>
+                Go Back
               </button>
             </div>
           </div>

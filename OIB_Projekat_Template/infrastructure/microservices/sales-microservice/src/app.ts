@@ -8,6 +8,8 @@ import { SalesController } from "./WebAPI/controllers/SalesController";
 import { initialize_database } from "./Database/InitializeConnection";
 import { StorageClient } from "./Services/clients/StorageClient";
 import { AnalyticsClient } from "./Services/clients/AnalyticsClient";
+import { IAuditingService } from "./Domain/services/IAuditingService";
+import { AuditingService } from "./Services/AuditingService";
 
 dotenv.config({ quiet: true });
 
@@ -37,8 +39,9 @@ const analyticsBaseUrl = process.env.ANALYTICS_BASE_URL ?? "http://localhost:555
 
 const storageClient = new StorageClient(storageBaseUrl);
 const analyticsClient = new AnalyticsClient(analyticsBaseUrl);
+const auditingService: IAuditingService = new AuditingService();
 
-const salesService = new SalesService(productRepo, storageClient, analyticsClient);
+const salesService = new SalesService(productRepo, storageClient, analyticsClient,auditingService);
 
 // CONTROLLERS
 const salesController = new SalesController(salesService);

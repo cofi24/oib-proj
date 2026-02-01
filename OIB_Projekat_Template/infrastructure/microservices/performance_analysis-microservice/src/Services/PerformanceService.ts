@@ -10,7 +10,8 @@ export class PerformanceService implements IPerformanceService {
     }
 
     async runSimulation(algorithmName: string): Promise<PerformanceReport> {
-        const seed = this.hashString(algorithmName);
+        const timeSeed = Date.now() % 1000;
+        const seed = this.hashString(algorithmName)+timeSeed;
 
         const executionTime = 100 + (seed % 1900);
         const successRate = 80 + (seed % 20);

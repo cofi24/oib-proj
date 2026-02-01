@@ -15,6 +15,8 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ authAPI }) => {
     email: "",
     password: "",
     role: UserRole.SELLER,
+    firstName: "",
+     lastName: "",
     profileImage: "",
   });
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -122,6 +124,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ authAPI }) => {
         >
           <option value={UserRole.SELLER}>Seller</option>
           <option value={UserRole.ADMIN}>Admin</option>
+          <option value={UserRole.SALES_MANAGER}>Sales Manager</option>
         </select>
       </div>
 
@@ -159,6 +162,43 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ authAPI }) => {
           disabled={isLoading}
         />
       </div>
+          <div>
+  <label
+    htmlFor="firstName"
+    style={{ display: "block", marginBottom: "8px", fontSize: "14px", fontWeight: 600 }}
+  >
+    First name
+  </label>
+  <input
+    type="text"
+    id="firstName"
+    name="firstName"
+    value={formData.firstName}
+    onChange={handleChange}
+    placeholder="Your first name"
+    required
+    disabled={isLoading}
+  />
+</div>
+
+<div>
+  <label
+    htmlFor="lastName"
+    style={{ display: "block", marginBottom: "8px", fontSize: "14px", fontWeight: 600 }}
+  >
+    Last name
+  </label>
+  <input
+    type="text"
+    id="lastName"
+    name="lastName"
+    value={formData.lastName}
+    onChange={handleChange}
+    placeholder="Your last name"
+    required
+    disabled={isLoading}
+  />
+</div>
 
       <div>
         <label htmlFor="profileImage" style={{ display: "block", marginBottom: "8px", fontSize: "14px", fontWeight: 600 }}>

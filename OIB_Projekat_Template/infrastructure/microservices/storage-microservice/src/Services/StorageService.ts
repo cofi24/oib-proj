@@ -4,13 +4,20 @@ import { IStorageStrategy } from "../Domain/services/IStorageStrategy";
 import { DistributionCenterStrategy } from "./strategies/DistributionCenterStrategy";
 import { WarehouseCenterStrategy } from "./strategies/WarehouseCenterStrategy";
 import { IPackagingRepository } from "../Domain/services/IPackagingRepository";
+import { IAuditingService } from "../Domain/services/IAuditingService";
+import { AuditLogType } from "../Domain/enums/AuditLogType";
+import { AuditingService } from "./AuditingService";
+
+
 
 function sleep(ms: number) {
   return new Promise<void>((resolve) => setTimeout(resolve, ms));
 }
 
 export class StorageService implements IStorageService {
-  constructor(private readonly packagingRepo: IPackagingRepository) {}
+  constructor(private readonly packagingRepo: IPackagingRepository,
+    private readonly auditingService: IAuditingService
+  ) {}
 
   private resolveStrategy(role: UserRole): IStorageStrategy {
     if (role === UserRole.ADMIN || role === UserRole.SALES_MANAGER) {
@@ -37,7 +44,10 @@ export class StorageService implements IStorageService {
 
     // Simulacija slanja radi nakon DB commit-a (ne držimo lock tokom sleep-a)
     await sleep(strategy.getDispatchDelayMs());
-
+    await this.auditingService.log(
+      AuditLogType.INFO,
+      `Packaging sent successfully | strategy=${strategy.getName()} | amount=${amount}`
+    );
     return {
       shipped: amount,
       strategy: strategy.getName(),

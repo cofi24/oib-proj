@@ -8,6 +8,8 @@ import { LogerService } from "./Services/LogerService";
 import { StorageController } from "./WebAPI/controllers/StorageController";
 import { PackagingRepository } from "./Services/repositories/PackagingRepository";
 
+import { AuditingService } from "./Services/AuditingService";
+import { IAuditingService } from "./Domain/services/IAuditingService";
 
 
 
@@ -33,8 +35,9 @@ app.use(express.json());
 initialize_database();
 
 // DEPENDENCY INJECTION
+const auditingService = new AuditingService();
 const packagingRepo = new PackagingRepository();
-const storageService = new StorageService(packagingRepo);
+const storageService = new StorageService(packagingRepo,auditingService);
 const logerService = new LogerService();
 
 // CONTROLLERS
