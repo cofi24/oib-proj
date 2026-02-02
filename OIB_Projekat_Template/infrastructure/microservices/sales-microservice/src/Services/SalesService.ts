@@ -6,13 +6,19 @@ import { BuyRequestDTO } from "../Domain/DTOs/BuyRequestDTO";
 import { ReceiptResponse } from "../Domain/types/ReceiptResponse";
 import { StorageClient } from "./clients/StorageClient";
 import { AnalyticsClient } from "./clients/AnalyticsClient";
+import { AuditingService } from "./AuditingService";
+import { AuditLogType } from "../Domain/enums/AuditLogType";
+import { IAuditingService } from "../Domain/services/IAuditingService";
+
+
 
 
 export class SalesService implements ISalesService {
   constructor(
     private readonly productRepo: IProductRepository,
     private readonly storageClient: StorageClient,
-    private readonly analyticsClient: AnalyticsClient
+    private readonly analyticsClient: AnalyticsClient,
+    private readonly auditingService: IAuditingService
   ) {}
 
   async getCatalog(query: GetCatalogDTO): Promise<ProductResponse[]> {
@@ -30,7 +36,12 @@ export class SalesService implements ISalesService {
 async buy(userRole: string, request: BuyRequestDTO): Promise<ReceiptResponse> {
   
   const role = (userRole ?? "").trim() || "SELLER";
-  
+
+   await this.auditingService.log(
+    AuditLogType.INFO,
+    `[SALES] Buy started | role=${role} | items=${request?.items?.length ?? 0}`
+  )
+
   if (!request?.items || request.items.length === 0) {
     throw new Error("Items are required.");
   }
@@ -71,7 +82,10 @@ async buy(userRole: string, request: BuyRequestDTO): Promise<ReceiptResponse> {
       items: receiptItems,
       grandTotal,
     });
-
+     await this.auditingService.log(
+      AuditLogType.INFO,
+      `[SALES] Buy success | receipt=${receipt.receiptId} | total=${grandTotal}`
+    );
     return receipt;
   } catch (err) {
     console.error("BUY FAILED - STORAGE or ANALYTICS ERROR:", err);

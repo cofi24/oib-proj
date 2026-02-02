@@ -41,8 +41,8 @@ export class PerformanceController {
 
         this.router.get(
             "/reports/:id/pdf",
-            //requireGateway,
-            //requireAdmin,
+            requireGateway,
+            requireAdmin,
             this.getReportPdf
         );
     }
