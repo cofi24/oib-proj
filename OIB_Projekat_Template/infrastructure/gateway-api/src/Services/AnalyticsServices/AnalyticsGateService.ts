@@ -10,7 +10,7 @@ import { AnalyticsReportDTO } from "../../Domain/DTOs/AnalyticsDTOs/AnalyticsRep
 
 export class AnalyticsGateService implements IAnalyticsGateService {
   private readonly baseUrl =
-    process.env.ANALYTICS_SERVICE_URL ?? "http://localhost:5557/api/v1";
+    process.env.ANALYTICS_SERVICE_URL ?? "http://localhost:5557/api/v1/analytics";
 
   private buildHeaders(token?: string): AxiosHeaders {
     const headers = new AxiosHeaders();
@@ -22,7 +22,7 @@ export class AnalyticsGateService implements IAnalyticsGateService {
 
   async createReport(body: CreateReportDTO, token?: string): Promise<AnalyticsReportDTO> {
     const res = await axios.post<AnalyticsReportDTO>(
-      `${this.baseUrl}/analytics/reports`,
+      `${this.baseUrl}/reports`,
       body,
       { headers: this.buildHeaders(token) }
     );
@@ -31,7 +31,7 @@ export class AnalyticsGateService implements IAnalyticsGateService {
 
   async getReports(token?: string): Promise<AnalyticsReportDTO[]> {
     const res = await axios.get<AnalyticsReportDTO[]>(
-      `${this.baseUrl}/analytics/reports`,
+      `${this.baseUrl}/reports`,
       { headers: this.buildHeaders(token) }
     );
     return res.data;
@@ -39,7 +39,7 @@ export class AnalyticsGateService implements IAnalyticsGateService {
 
   async getReportById(id: number, token?: string): Promise<AnalyticsReportDTO> {
     const res = await axios.get<AnalyticsReportDTO>(
-      `${this.baseUrl}/analytics/reports/${id}`,
+      `${this.baseUrl}/reports/${id}`,
       { headers: this.buildHeaders(token) }
     );
     return res.data;
@@ -47,7 +47,7 @@ export class AnalyticsGateService implements IAnalyticsGateService {
 
   async getSummary(period: string, token?: string): Promise<SummaryDTO> {
     const res = await axios.get<SummaryDTO>(
-      `${this.baseUrl}/analytics/reports/summary/${period}`,
+      `${this.baseUrl}/reports/summary/${period}`,
       { headers: this.buildHeaders(token) }
     );
     return res.data;
@@ -55,7 +55,7 @@ export class AnalyticsGateService implements IAnalyticsGateService {
 
   async getTrend(token?: string): Promise<TrendDTO[]> {
     const res = await axios.get<TrendDTO[]>(
-      `${this.baseUrl}/analytics/reports/trend`,
+      `${this.baseUrl}/reports/trend`,
       { headers: this.buildHeaders(token) }
     );
     return res.data;
@@ -63,7 +63,7 @@ export class AnalyticsGateService implements IAnalyticsGateService {
 
   async getTop10(token?: string): Promise<TopTenDTO[]> {
     const res = await axios.get<TopTenDTO[]>(
-      `${this.baseUrl}/analytics/reports/top10`,
+      `${this.baseUrl}/reports/top10`,
       { headers: this.buildHeaders(token) }
     );
     return res.data;
@@ -71,7 +71,7 @@ export class AnalyticsGateService implements IAnalyticsGateService {
 
   async getTop10Revenue(token?: string): Promise<TopTenDTO[]> {
     const res = await axios.get<TopTenDTO[]>(
-      `${this.baseUrl}/analytics/reports/top10/revenue`,
+      `${this.baseUrl}/reports/top10/revenue`,
       { headers: this.buildHeaders(token) }
     );
     return res.data;
@@ -79,7 +79,7 @@ export class AnalyticsGateService implements IAnalyticsGateService {
 
   async exportPdf(id: number, token?: string): Promise<{ buffer: Buffer; filename: string }> {
     const res = await axios.get<ArrayBuffer>(
-      `${this.baseUrl}/analytics/reports/${id}/pdf`,
+      `${this.baseUrl}/reports/${id}/pdf`,
       {
         headers: this.buildHeaders(token),
         responseType: "arraybuffer",
@@ -94,7 +94,7 @@ export class AnalyticsGateService implements IAnalyticsGateService {
 
   async createReceipt(body: ReceiptDTO, token?: string): Promise<ReceiptDTO> {
     const res = await axios.post<ReceiptDTO>(
-      `${this.baseUrl}/analytics/receipts`,
+      `${this.baseUrl}/receipts`,
       body,
       { headers: this.buildHeaders(token) }
     );
@@ -103,7 +103,7 @@ export class AnalyticsGateService implements IAnalyticsGateService {
 
   async getReceipts(token?: string): Promise<ReceiptDTO[]> {
     const res = await axios.get<ReceiptDTO[]>(
-      `${this.baseUrl}/analytics/receipts`,
+      `${this.baseUrl}/receipts`,
       { headers: this.buildHeaders(token) }
     );
     return res.data;
@@ -111,7 +111,7 @@ export class AnalyticsGateService implements IAnalyticsGateService {
 
   async getReceiptById(id: number, token?: string): Promise<ReceiptDTO> {
     const res = await axios.get<ReceiptDTO>(
-      `${this.baseUrl}/analytics/receipts/${id}`,
+      `${this.baseUrl}/receipts/${id}`,
       { headers: this.buildHeaders(token) }
     );
     return res.data;
@@ -119,7 +119,7 @@ export class AnalyticsGateService implements IAnalyticsGateService {
 
   async exportReceiptPdf(id: number, token?: string): Promise<{ buffer: Buffer; filename: string }> {
     const res = await axios.get<ArrayBuffer>(
-      `${this.baseUrl}/analytics/receipts/${id}/pdf`,
+      `${this.baseUrl}/receipts/${id}/pdf`,
       {
         headers: this.buildHeaders(token),
         responseType: "arraybuffer",

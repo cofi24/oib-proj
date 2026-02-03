@@ -47,25 +47,30 @@ export class FiscalReceiptController {
     }
   };
 
-  private pdf = async (req: Request, res: Response) => {
-    try {
-      const id = Number(req.params.id);
-      if (Number.isNaN(id)) {
-        return res.status(400).json({ message: "Neispravan ID računa" });
-      }
-
-      const buffer = await this.service.exportPdf(id);
-
-      res.setHeader("Content-Type", "application/pdf");
-      res.setHeader(
-        "Content-Disposition",
-        `attachment; filename="racun-${id}.pdf"`
-      );
-      res.status(200).send(buffer);
-    } catch (e) {
-      res.status(404).json({ message: (e as Error).message });
+private pdf = async (req: Request, res: Response) => {
+  try {
+    const id = Number(req.params.id);
+    if (Number.isNaN(id)) {
+      return res.status(400).json({ message: "Neispravan ID računa" });
     }
-  };
+
+    const buffer = await this.service.exportPdf(id);
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="racun-${id}-${Date.now()}.pdf"`
+    );
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+
+    res.status(200).send(buffer);
+  } catch (e) {
+    res.status(404).json({ message: (e as Error).message });
+  }
+};
+
 
   public getRouter(): Router {
     return this.router;

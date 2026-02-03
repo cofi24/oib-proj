@@ -1,7 +1,7 @@
 
 
-1.korak) 
-npm i -D concurrently
+
+PS C:\Users\cofi24\Desktop\Git uploads\oib-proj\OIB_Projekat_Template>
 
 2.korak)
 npm run dev:all

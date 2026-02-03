@@ -19,14 +19,14 @@ export class FiscalReceiptService implements IFiscalReceiptService {
 
   async create(data: CreateFiscalReceiptDTO): Promise<FiscalReceiptDTO> {
     try {
-      console.log("[FiscalReceiptService] Received data:", JSON.stringify(data, null, 2));
+      console.log("FiscalReceiptService Received data:", JSON.stringify(data, null, 2));
 
       if (!data.brojRacuna || data.brojRacuna.trim() === "") {
-        throw new Error("Broj računa je obavezan.");
+        throw new Error("Account number is required");
       }
 
       if (!data.items || !Array.isArray(data.items) || data.items.length === 0) {
-        throw new Error("Items su obavezni za fiskalni račun.");
+        throw new Error("Items are required for the fiscal account.");
       }
 
       const items: FiscalReceiptItem[] = data.items.map((i) => {
@@ -35,7 +35,7 @@ export class FiscalReceiptService implements IFiscalReceiptService {
         const lineTotal = Number(i.lineTotal || (unit * qty)); 
 
         if (!i.perfumeId || qty <= 0 || unit <= 0) {
-          throw new Error(`Nevalidna stavka računa: ${JSON.stringify(i)}`);
+          throw new Error(`Invalid invoice item: ${JSON.stringify(i)}`);
         }
 
         return Object.assign(new FiscalReceiptItem(), {
@@ -72,11 +72,11 @@ export class FiscalReceiptService implements IFiscalReceiptService {
 
       const saved = await this.repo.save(receipt);
 
-      console.log("[FiscalReceiptService] Receipt saved successfully:", saved.brojRacuna);
+      console.log("FiscalReceiptService Receipt saved successfully:", saved.brojRacuna);
 
       await this.auditing.log(
         AuditLogType.INFO,
-        `[ANALYTICS] Kreiran fiskalni račun ${saved.brojRacuna}`
+        `[ANALYTICS] Kreiran  račun ${saved.brojRacuna}`
       );
 
       return this.toDTO(saved);

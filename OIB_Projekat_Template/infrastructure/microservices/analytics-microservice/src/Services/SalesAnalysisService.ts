@@ -22,24 +22,31 @@ export class SalesAnalysisService implements ISalesAnalysisService {
   ) {}
 
   private normalizePeriod(period: string): string {
-    const p = (period ?? "").toLowerCase();
-    if (p === "nedelja") return "NEDELJA";
-    if (p === "mesec") return "MESEC";
-    if (p === "godina") return "GODINA";
-    if (p === "ukupno") return "UKUPNO";
-    return "UKUPNO";
+    const map: Record<string, string> = {
+      nedelja: "NEDELJA",
+      mesec: "MESEC",
+      godina: "GODINA",
+      ukupno: "UKUPNO"
+    };
+    return map[(period ?? "").toLowerCase()] ?? "UKUPNO";
+  }
+
+  private applyPeriodFilter(qb: any, period: string): void {
+    const filters: Record<string, string> = {
+      NEDELJA: "DATE_SUB(NOW(), INTERVAL 7 DAY)",
+      MESEC: "DATE_SUB(NOW(), INTERVAL 1 MONTH)",
+      GODINA: "DATE_SUB(NOW(), INTERVAL 1 YEAR)"
+    };
+    
+    if (filters[period]) {
+      qb.where(`r.createdAt >= ${filters[period]}`);
+    }
   }
 
   async createReport(data: CreateSalesAnalysisReportDTO): Promise<SalesAnalysisReportDTO> {
-    const report = this.reportRepo.create({
-      nazivIzvestaja: data.nazivIzvestaja,
-      opis: data.opis,
-      period: data.period,
-      ukupnaProdaja: data.ukupnaProdaja,
-      ukupnaZarada: data.ukupnaZarada,
-    });
-
-    const saved = await this.reportRepo.save(report);
+    const saved = await this.reportRepo.save(
+      this.reportRepo.create(data)
+    );
 
     await this.auditing.log(
       AuditLogType.INFO,
@@ -53,7 +60,7 @@ export class SalesAnalysisService implements ISalesAnalysisService {
     const reports = await this.reportRepo.find({
       order: { createdAt: "DESC" },
     });
-    return reports.map((r) => this.toDTO(r));
+    return reports.map(r => this.toDTO(r));
   }
 
   async getReportById(id: number): Promise<SalesAnalysisReportDTO> {
@@ -65,14 +72,8 @@ export class SalesAnalysisService implements ISalesAnalysisService {
   async getSummary(period: string): Promise<SalesSummaryDTO> {
     const normalized = this.normalizePeriod(period);
     const qb = this.receiptRepo.createQueryBuilder("r");
-
-    if (normalized === "NEDELJA") {
-      qb.where("r.createdAt >= DATE_SUB(NOW(), INTERVAL 7 DAY)");
-    } else if (normalized === "MESEC") {
-      qb.where("r.createdAt >= DATE_SUB(NOW(), INTERVAL 1 MONTH)");
-    } else if (normalized === "GODINA") {
-      qb.where("r.createdAt >= DATE_SUB(NOW(), INTERVAL 1 YEAR)");
-    }
+    
+    this.applyPeriodFilter(qb, normalized);
 
     const row = await qb
       .select("COALESCE(SUM(r.ukupnaKolicina),0)", "ukupnoParfema")
@@ -90,14 +91,8 @@ export class SalesAnalysisService implements ISalesAnalysisService {
   async getTrend(period?: string): Promise<SalesTrendDTO[]> {
     const normalized = this.normalizePeriod(period ?? "UKUPNO");
     const qb = this.receiptRepo.createQueryBuilder("r");
-
-    if (normalized === "NEDELJA") {
-      qb.where("r.createdAt >= DATE_SUB(NOW(), INTERVAL 7 DAY)");
-    } else if (normalized === "MESEC") {
-      qb.where("r.createdAt >= DATE_SUB(NOW(), INTERVAL 1 MONTH)");
-    } else if (normalized === "GODINA") {
-      qb.where("r.createdAt >= DATE_SUB(NOW(), INTERVAL 1 YEAR)");
-    }
+    
+    this.applyPeriodFilter(qb, normalized);
 
     const rows = await qb
       .select("DATE(r.createdAt)", "label")
@@ -107,7 +102,7 @@ export class SalesAnalysisService implements ISalesAnalysisService {
       .orderBy("label", "ASC")
       .getRawMany();
 
-    return rows.map((r) => ({
+    return rows.map(r => ({
       label: String(r.label),
       prodato: Number(r.prodato),
       zarada: Number(r.zarada),
@@ -126,7 +121,7 @@ export class SalesAnalysisService implements ISalesAnalysisService {
       .limit(10)
       .getRawMany();
 
-    return rows.map((r) => ({
+    return rows.map(r => ({
       naziv: String(r.naziv),
       prodaja: Number(r.prodaja),
       prihod: Number(r.prihod),
@@ -134,22 +129,19 @@ export class SalesAnalysisService implements ISalesAnalysisService {
   }
 
   async getTop10Revenue(): Promise<{ ukupno: number }> {
-  const rows = await this.receiptRepo
-    .createQueryBuilder("r")
-    .innerJoin("r.items", "i")
-    .select("SUM(i.lineTotal)", "prihod")
-    .groupBy("i.perfumeName")
-    .orderBy("prihod", "DESC")
-    .limit(10)
-    .getRawMany();
+    const rows = await this.receiptRepo
+      .createQueryBuilder("r")
+      .innerJoin("r.items", "i")
+      .select("SUM(i.lineTotal)", "prihod")
+      .groupBy("i.perfumeName")
+      .orderBy("prihod", "DESC")
+      .limit(10)
+      .getRawMany();
 
-  const ukupno = rows.reduce(
-    (sum, r) => sum + Number(r.prihod),
-    0
-  );
-
-  return { ukupno };
-}
+    return { 
+      ukupno: rows.reduce((sum, r) => sum + Number(r.prihod), 0) 
+    };
+  }
 
   async exportPdf(id: number): Promise<Buffer> {
     const report = await this.getReportById(id);
@@ -168,19 +160,19 @@ export class SalesAnalysisService implements ISalesAnalysisService {
 
     const summary = await this.getSummary(normalized);
 
-    const report = this.reportRepo.create({
-      nazivIzvestaja: `Izveštaj prodaje - ${normalized}`,
-      opis: `Automatski generisan izveštaj`,
-      period: normalized,
-      ukupnaProdaja: summary.ukupnaProdaja,
-      ukupnaZarada: summary.ukupnaZarada,
-    });
-
-    const saved = await this.reportRepo.save(report);
+    const saved = await this.reportRepo.save(
+      this.reportRepo.create({
+        nazivIzvestaja: `Izveštaj prodaje - ${normalized}`,
+        opis: `Kreiran izveštaj`,
+        period: normalized,
+        ukupnaProdaja: summary.ukupnaProdaja,
+        ukupnaZarada: summary.ukupnaZarada,
+      })
+    );
 
     await this.auditing.log(
       AuditLogType.INFO,
-      `[ANALYTICS] Kreiran izveštaj za period=${normalized}, id=${saved.id}`
+      `[ANALYTICS] Izvestaj kreiran za id=${saved.id}, period=${normalized}`
     );
 
     return this.toDTO(saved);

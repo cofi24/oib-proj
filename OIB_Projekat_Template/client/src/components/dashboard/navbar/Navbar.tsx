@@ -18,10 +18,29 @@ export const DashboardNavbar: React.FC = () => {
   };
 
   return (
-    <nav className="dashboard-navbar">
-      <div className="navbar-content">
-        <div className="navbar-brand">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+    <nav style={{
+      backgroundColor: '#1a1a2e',
+      borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+      padding: '0 32px',
+      position: 'sticky',
+      top: 0,
+      zIndex: 1000
+    }}>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        height: '70px',
+        maxWidth: '1400px',
+        margin: '0 auto'
+      }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          color: '#ffffff'
+        }}>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
             <path
               d="M12 2L2 7L12 12L22 7L12 2Z"
               stroke="currentColor"
@@ -44,26 +63,85 @@ export const DashboardNavbar: React.FC = () => {
               strokeLinejoin="round"
             />
           </svg>
-          <span className="navbar-brand-text">Parfemi ERP</span>
+          <span style={{
+            fontSize: '20px',
+            fontWeight: '700',
+            letterSpacing: '-0.5px'
+          }}>Parfemi ERP</span>
         </div>
 
-        <div className="navbar-user">
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '16px'
+        }}>
           {user ? (
             <>
-              <div className="navbar-user-info">
-                <div className="navbar-avatar-placeholder">
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px'
+              }}>
+                <div style={{
+                  width: '42px',
+                  height: '42px',
+                  borderRadius: '50%',
+                  backgroundColor: '#3b82f6',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#ffffff',
+                  fontSize: '16px',
+                  fontWeight: '600'
+                }}>
                   {user.username.charAt(0).toUpperCase()}
                 </div>
 
-                <div className="navbar-user-details">
-                  <div className="navbar-user-email">{user.username}</div>
-                  <div className="navbar-user-role">
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '2px'
+                }}>
+                  <div style={{
+                    color: '#ffffff',
+                    fontSize: '14px',
+                    fontWeight: '500'
+                  }}>{user.username}</div>
+                  <div style={{
+                    color: 'rgba(255, 255, 255, 0.6)',
+                    fontSize: '12px'
+                  }}>
                     {roleSrpski[user.role] || user.role}
                   </div>
                 </div>
               </div>
 
-              <button className="navbar-logout-btn" onClick={handleLogout}>
+              <button 
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '10px 18px',
+                  backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                  border: '1px solid rgba(239, 68, 68, 0.3)',
+                  borderRadius: '8px',
+                  color: '#ef4444',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  fontFamily: 'inherit'
+                }}
+                onClick={handleLogout}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.2)';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                   <path
                     d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9"
@@ -87,7 +165,7 @@ export const DashboardNavbar: React.FC = () => {
                     strokeLinejoin="round"
                   />
                 </svg>
-                <span className="navbar-logout-text">Odjavi se</span>
+                <span>Odjavi se</span>
               </button>
             </>
           ) : null}

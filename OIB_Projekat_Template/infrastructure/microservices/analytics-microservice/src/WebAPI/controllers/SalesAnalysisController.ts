@@ -12,7 +12,7 @@ export class SalesAnalysisController {
    
     this.router.get("/analytics/reports/summary/:period", this.summary);
     this.router.get("/analytics/reports/trend", this.trend);
-    this.router.get("/analytics/reports/top10-revenue", this.top10Revenue);
+    this.router.get("/analytics/reports/top10/revenue", this.top10Revenue);
     this.router.get("/analytics/reports/top10", this.top10);
     this.router.get("/analytics/reports/:id/pdf", this.pdf);
     this.router.post("/analytics/reports", this.create);
@@ -99,24 +99,28 @@ export class SalesAnalysisController {
   };
 
   private pdf = async (req: Request, res: Response) => {
-    try {
-      const id = Number(req.params.id);
-      if (Number.isNaN(id)) {
-        return res.status(400).json({ message: "Neispravan ID izveštaja" });
-      }
-
-      const buffer = await this.service.exportPdf(id);
-
-      res.setHeader("Content-Type", "application/pdf");
-      res.setHeader(
-        "Content-Disposition",
-        `attachment; filename="report-${id}.pdf"`
-      );
-      res.status(200).send(buffer);
-    } catch (e) {
-      res.status(404).json({ message: (e as Error).message });
+  try {
+    const id = Number(req.params.id);
+    if (Number.isNaN(id)) {
+      return res.status(400).json({ message: "Neispravan ID izveštaja" });
     }
-  };
+
+    const buffer = await this.service.exportPdf(id);
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="report-${id}-${Date.now()}.pdf"`
+    );
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+
+    res.status(200).send(buffer);
+  } catch (e) {
+    res.status(404).json({ message: (e as Error).message });
+  }
+};
 
   public getRouter(): Router {
     return this.router;
