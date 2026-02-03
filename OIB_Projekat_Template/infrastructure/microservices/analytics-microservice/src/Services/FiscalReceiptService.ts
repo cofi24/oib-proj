@@ -81,7 +81,7 @@ export class FiscalReceiptService implements IFiscalReceiptService {
 
       return this.toDTO(saved);
     } catch (err) {
-        let message = "Greška pri kreiranju fiskalnog računa";
+        let message = "Greška pri kreiranju računa";
 
         if (err instanceof Error) {
           message = err.message;
@@ -91,7 +91,7 @@ export class FiscalReceiptService implements IFiscalReceiptService {
 
         await this.auditing.log(
           AuditLogType.ERROR,
-          `[ANALYTICS] Greška pri kreiranju fiskalnog računa: ${message}`
+          `[ANALYTICS] Greška pri kreiranju računa: ${message}`
         );
 
         throw new Error(message);
