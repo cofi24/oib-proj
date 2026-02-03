@@ -9,7 +9,7 @@ import { ProcessedBatch } from "./Domain/models/ProcessedBatch";
 import { ProcessingService } from "./Services/ProcessingService";
 import { AuditingService } from "./Services/AuditingService";
 import { ProductionClient } from "./Services/ProductionClient";
-import { ProcessingController } from "./WebAPI/controllers/ProcessingController";
+import { ProcessingController } from "./WebAPI/controlers/ProcessingController";
 import { IAuditingService } from "./Domain/services/IAuditingService";
 import { IProductionClient } from "./Domain/services/IProductionClient";
 import { IProcessingService } from "./Domain/services/IProcessingService";

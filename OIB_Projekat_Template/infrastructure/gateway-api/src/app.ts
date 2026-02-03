@@ -28,6 +28,16 @@ import { SalesGateController } from './WebAPI/SalesControllers/SalesGateControll
 import { IStorageGateService } from './Domain/services/IStorageGateService';
 import { StorageGateService } from './Services/StorageService/StorageGateService';
 import { StorageGateController } from './WebAPI/StorageControllers/StorageGateControllers';
+//production imports
+import { IProductionGateService } from './Domain/services/IProductionGateService';
+import { ProductionGateService } from './Services/ProductionServices/ProductionGateService';
+import { ProductionGateController } from './WebAPI/ProductionControllers/ProductionGateController';
+//processing imports
+import { IProcessingGateService } from './Domain/services/IProcessingGateService';
+import { ProcessingGateService } from './Services/ProcessingServices/ProcessingGateService';
+import { ProcessingGateController } from './WebAPI/ProcessingControllers/ProcessingGateController';
+
+
 
 
 dotenv.config({ quiet: true });
@@ -55,6 +65,8 @@ const analyticsService: IAnalyticsGateService = new AnalyticsGateService();
 const performanceService: IPerformanceGateService = new PerformanceGateService();
 const salesService: ISalesGateService = new SalesGateService();
 const storageService: IStorageGateService = new StorageGateService();
+const productionService: IProductionGateService = new ProductionGateService();
+const processingService: IProcessingGateService = new ProcessingGateService();
 
 
 // Controllers
@@ -65,6 +77,11 @@ const analyticsController = new AnalyticsGateController(analyticsService);
 const performanceController = new PerformanceGateController(performanceService);
 const salesController = new SalesGateController(salesService);
 const storageController = new StorageGateController(storageService);
+const productionController = new ProductionGateController(productionService);
+const processingController = new ProcessingGateController(processingService);
+
+// Registering production controller
+app.use('/api/v1', productionController.getRouter());
 
 
 // Registering individual controllers
@@ -79,5 +96,9 @@ app.use('/api/v1', performanceController.getRouter());
 app.use('/api/v1', salesController.getRouter());
 //storage controller
 app.use('/api/v1', storageController.getRouter());
+//  production controller
+app.use('/api/v1', productionController.getRouter());
+// processing controller
+app.use('/api/v1', processingController.getRouter());
 
 export default app;

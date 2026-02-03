@@ -6,7 +6,7 @@ export async function initializeDatabase(): Promise<void> {
       await AppDataSource.initialize();
       console.log("\x1b[34m[ProductionDB]\x1b[0m Connected successfully");
 
-      // debug – vidi da li je tabela učitana
+      
       console.log(
         "Entities:",
         AppDataSource.entityMetadatas.map(e => e.name)

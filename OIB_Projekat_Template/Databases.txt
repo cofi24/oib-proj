@@ -4,3 +4,6 @@ CREATE DATABASE performance_reports_db;
 CREATE DATABASE users_db;
 CREATE DATABASE storage_db;
 CREATE DATABASE audit_logs_db;
+CREATE DATABASE processing_db;
+CREATE DATABASE production_db;
+

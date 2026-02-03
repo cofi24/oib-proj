@@ -111,7 +111,7 @@ export class ProductionService implements IProductionService {
 
     await this.audit.log(
       AuditLogType.INFO,
-      `sažetak berbe (${plantType}): zatraženo=${data.quantity}, ubrano=${toHarvest.length}, automatski_zasađeno=${missing}`
+      `Berba (${plantType}): zatraženo=${data.quantity}, ubrano=${toHarvest.length}, automatski_zasađeno=${missing}`
     );
 
     return { harvested: toHarvest.length };

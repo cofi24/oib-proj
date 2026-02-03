@@ -9,7 +9,7 @@ export class ProductionController {
     this.router.post("/plant", this.plant);
     this.router.post("/adjust", this.adjust);
     this.router.post("/harvest", this.harvest);
-    this.router.post("/production/balance", this.balance);
+    this.router.post("/balance", this.balance);
   }
 
   private getAll = async (_: Request, res: Response) => {

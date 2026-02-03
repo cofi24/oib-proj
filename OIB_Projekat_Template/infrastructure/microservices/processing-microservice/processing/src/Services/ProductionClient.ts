@@ -2,13 +2,13 @@ import axios from "axios";
 import { IProductionClient } from "../Domain/services/IProductionClient";
 
 export class ProductionClient implements IProductionClient {
-  private base = process.env.PRODUCTION_SERVICE_API ?? "http://localhost:3003/api/v1/production";
+  private base = process.env.PRODUCTION_SERVICE_API ?? "http://localhost:5560/api/v1/production";
 
   async harvest(plantType: string, quantity: number, token?: string): Promise<{ harvested: number }> {
     const res = await axios.post(
       `${this.base}/harvest`,
       { plantType, quantity },
-      { headers: token ? { Authorization: `Bearer ${token}` } : {} }
+      { headers: token ? { Authorization: `Bearer ${token}` }:{} }
     );
     return res.data;
   }
@@ -19,7 +19,7 @@ export class ProductionClient implements IProductionClient {
   token?: string
 ) {
   const res = await axios.post(
-    `${this.base}/production/balance`,
+    `${this.base}/balance`,
     { plantType, processedOilStrength },
     { headers: token ? { Authorization: `Bearer ${token}` } : {} }
   );

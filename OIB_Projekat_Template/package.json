@@ -5,7 +5,8 @@
     "dev:auth": "npm --prefix infrastructure/microservices/auth-microservice run dev",
     "dev:audit": "npm --prefix infrastructure/microservices/audit-microservice run dev",
     "dev:performance": "npm --prefix infrastructure/microservices/performance_analysis-microservice run dev",
-
+    "dev:production": "npm --prefix infrastructure/microservices/production-microservice/production-microservice run dev",
+    "dev:processing": "npm --prefix infrastructure/microservices/processing-microservice/processing run dev",
     "dev:sales": "npm --prefix infrastructure/microservices/sales-microservice run dev",
     "dev:storage": "npm --prefix infrastructure/microservices/storage-microservice run dev",
     "dev:users": "npm --prefix infrastructure/microservices/user-microservice run dev",

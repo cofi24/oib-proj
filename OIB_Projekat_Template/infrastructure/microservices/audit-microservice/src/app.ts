@@ -19,7 +19,7 @@ app.use(cors({ origin: corsOrigin, methods: corsMethods }));
 app.use(express.json());
 
 export async function setupApp() {
-    try {
+    
         if (!Db.isInitialized) {
             await initialize_database();
         }
@@ -34,10 +34,8 @@ export async function setupApp() {
         console.log("\x1b[32m[AuditService]\x1b[0m App setup complete");
 
         return app;
-    } catch (error) {
-        console.error("\x1b[31m[AuditService]\x1b[0m Setup error:", error);
-        process.exit(1);
-    }
+     
+    
 }
 
 export default app;

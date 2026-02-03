@@ -9,8 +9,7 @@ export class ProcessingController {
     this.router.get("/batches", this.getAll);
     this.router.get("/batches/:id", this.getById);
     this.router.post("/start", this.start);
-    this.router.get("/perfumes", this.getCatalog);
-    this.router.post("/perfumes/:id/sell", this.registerSale);
+   
   }
 
   private getAll = async (_: Request, res: Response) => {
@@ -26,45 +25,33 @@ export class ProcessingController {
     }
   };
 
-  private start = async (req: Request, res: Response) => {
-    const v = validateStartProcessing(req.body);
-    if (!v.success) return res.status(400).json({ message: v.message });
+private start = async (req: Request, res: Response) => {
+  const v = validateStartProcessing(req.body);
+  if (!v.success) {
+    return res.status(400).json({ message: v.message });
+  }
 
-    try {
-      const result = await this.service.start(req.body);
-      res.status(201).json(result);
-    } catch (e) {
-      const message = e instanceof Error ? e.message : "Processing failed";
-      res.status(400).json({ message });
-    }
-  };
+  try {
+    const authHeader = req.headers.authorization;
+if (!authHeader) {
+  return res.status(401).json({ message: "Missing Authorization header" });
+}
 
-  private getCatalog = async (_: Request, res: Response) => {
-    try {
-      const catalog = await this.service.getCatalog();
-      res.json(catalog);
-    } catch (e) {
-      const message = e instanceof Error ? e.message : "Failed to fetch catalog";
-      res.status(500).json({ message });
-    }
-  };
+const jwtToken = authHeader.startsWith("Bearer ")
+  ? authHeader.split(" ")[1]
+  : authHeader;
 
-  private registerSale = async (req: Request, res: Response) => {
-    try {
-      const perfumeId = Number(req.params.id);
-      const { quantity } = req.body;
+const result = await this.service.start(req.body, jwtToken);
+    res.status(201).json(result);
+  } catch (e) {
+    const message = e instanceof Error ? e.message : "Processing failed";
+    res.status(400).json({ message });
+  }
+};
 
-      if (!quantity || quantity <= 0) {
-        return res.status(400).json({ message: "Invalid quantity" });
-      }
 
-      await this.service.registerSale(perfumeId, quantity);
-      res.status(200).json({ success: true });
-    } catch (e) {
-      const message = e instanceof Error ? e.message : "Failed to register sale";
-      res.status(400).json({ message });
-    }
-  };
+
+ 
   
   getRouter() {
     return this.router;
