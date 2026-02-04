@@ -25,6 +25,10 @@ import { ProductionAPI } from "./api/production/ProductionAPI";
 import { IProcessingAPI } from "./api/processing/IProcessingAPI";
 import { ProcessingAPI } from "./api/processing/ProcessingAPI";
 import { ProcessingPage } from "./pages/ProcessingPage";
+//sales
+import { SalesPage } from "./pages/SalesPage";
+import { ISalesAPI } from "./api/sales/ISalesAPI";
+import { SalesAPI } from "./api/sales/SalesAPI";
 
 
 
@@ -34,6 +38,9 @@ const audit_api: IAuditAPI = new AuditAPI();
 const analytics_api: IAnalyticsAPI = new AnalyticsAPI();
 const production_api: IProductionAPI = new ProductionAPI();
 const processing_api: IProcessingAPI = new ProcessingAPI();
+const sales_api: ISalesAPI = new SalesAPI();
+
+
 
 function App() {
   return (
@@ -90,6 +97,14 @@ function App() {
         }
       />
 
+          <Route
+        path="/sales"
+        element={
+          <ProtectedRoute requiredRole="admin,seller,sales_manager">
+            <SalesPage salesAPI={sales_api} />
+          </ProtectedRoute>
+        }
+      />
 
 
 
