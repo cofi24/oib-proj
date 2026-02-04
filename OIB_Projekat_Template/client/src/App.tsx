@@ -29,6 +29,10 @@ import { ProcessingPage } from "./pages/ProcessingPage";
 import { SalesPage } from "./pages/SalesPage";
 import { ISalesAPI } from "./api/sales/ISalesAPI";
 import { SalesAPI } from "./api/sales/SalesAPI";
+//storage
+import { StoragePage } from "./pages/StoragePage";
+import { IStorageAPI } from "./api/storage/IStorageAPI";
+import { StorageAPI } from "./api/storage/StorageAPI";
 
 
 
@@ -39,7 +43,7 @@ const analytics_api: IAnalyticsAPI = new AnalyticsAPI();
 const production_api: IProductionAPI = new ProductionAPI();
 const processing_api: IProcessingAPI = new ProcessingAPI();
 const sales_api: ISalesAPI = new SalesAPI();
-
+const storage_api: IStorageAPI = new StorageAPI();
 
 
 function App() {
@@ -106,6 +110,14 @@ function App() {
         }
       />
 
+        <Route
+        path="/storage"
+        element={
+          <ProtectedRoute requiredRole="admin,seller,sales_manager">
+            <StoragePage storageAPI={storage_api} />
+          </ProtectedRoute>
+        }
+      />
 
 
 
