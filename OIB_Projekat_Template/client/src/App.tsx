@@ -17,6 +17,11 @@ import { PerformancePage } from "./pages/PerformancePage";
 import { AnalyticsPage } from "./pages/AnalyticsPage";
 import { IAnalyticsAPI } from "./api/analytics/IAnalyticsAPI";
 import { AnalyticsAPI } from "./api/analytics/AnalyticsAPI";
+//production  
+import { ProductionPage } from "./pages/ProductionPage";
+import { IProductionAPI } from "./api/production/IProductionAPI";
+import { ProductionAPI } from "./api/production/ProductionAPI";
+
 
 
 
@@ -24,7 +29,7 @@ const auth_api: IAuthAPI = new AuthAPI();
 //const user_api: IUserAPI = new UserAPI();
 const audit_api: IAuditAPI = new AuditAPI();
 const analytics_api: IAnalyticsAPI = new AnalyticsAPI();
-
+const production_api: IProductionAPI = new ProductionAPI();
 
 function App() {
   return (
@@ -59,6 +64,22 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/production"
+        element={
+          <ProtectedRoute requiredRole="admin,seller,sales_manager">
+            <ProductionPage productionAPI={production_api} auditAPI={audit_api} />
+          </ProtectedRoute>
+        }
+      />
+
+
+
+
+
+
+
+
         <Route path="/" element={<AuthPage authAPI={auth_api} />} />
       </Routes>
     </>
