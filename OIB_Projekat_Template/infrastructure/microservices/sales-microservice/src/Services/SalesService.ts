@@ -9,7 +9,7 @@ import { AnalyticsClient } from "./clients/AnalyticsClient";
 import { AuditingService } from "./AuditingService";
 import { AuditLogType } from "../Domain/enums/AuditLogType";
 import { IAuditingService } from "../Domain/services/IAuditingService";
-
+import { ProcessingClient } from "./clients/ProcessingClient";
 
 
 
@@ -18,21 +18,81 @@ export class SalesService implements ISalesService {
     private readonly productRepo: IProductRepository,
     private readonly storageClient: StorageClient,
     private readonly analyticsClient: AnalyticsClient,
-    private readonly auditingService: IAuditingService
+    private readonly auditingService: IAuditingService,
+    private readonly processingClient: ProcessingClient
   ) {}
 
-  async getCatalog(query: GetCatalogDTO): Promise<ProductResponse[]> {
-    const products = await this.productRepo.getCatalog(query);
+async getCatalog(query: GetCatalogDTO, headers: Record<string, string>): Promise<ProductResponse[]> {
+  try {
+    const batches = await this.processingClient.getCatalogg(headers);
+    
+    console.log("[SalesService] Batches from processing:", JSON.stringify(batches, null, 2));
+    
+    // Mapiraj batches u proizvode
+    // Svaki batch predstavlja tip parfema sa dostupnim količinama
+    let products = batches
+      .filter((batch: any) => {
+        // Prikaži samo batche koji imaju dostupne bočice (nisu sve prodate)
+        const available = (batch.bottleCount || 0) - (batch.soldCount || 0);
+        return available > 0;
+      })
+      .map((batch: any) => {
+        const available = (batch.bottleCount || 0) - (batch.soldCount || 0);
+        
+        // Cena zavisi od volumena
+        let price = 89.99; // Default za 150ml
+        if (batch.bottleVolumeMl === 250) {
+          price = 139.99;
+        }
+        
+        return {
+          id: batch.id,
+          name: batch.perfumeType || `Parfem #${batch.id}`,
+          brand: "O'Sinjel De Or",
+          price: price,
+          quantity: available, // Broj dostupnih bočica
+          volumeMl: batch.bottleVolumeMl,
+          batchInfo: `${available} od ${batch.bottleCount} dostupno`
+        };
+      });
 
-    return products.map((p) => ({
-      id: p.id,
-      name: p.name,
-      brand: p.brand,
-      price: Number(p.price),
-      quantity: p.quantity,
-    }));
+    // Primeni pretragu
+    if (query.search && query.search.trim().length > 0) {
+      const searchLower = query.search.toLowerCase();
+      products = products.filter((p: any) => 
+        p.name.toLowerCase().includes(searchLower) ||
+        p.brand.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // Primeni sortiranje
+    const sortBy = query.sortBy || "name";
+    const sortOrder = query.sortOrder || "asc";
+    
+    products.sort((a: any, b: any) => {
+      let aVal = a[sortBy];
+      let bVal = b[sortBy];
+      
+      if (sortBy === "price") {
+        aVal = Number(aVal);
+        bVal = Number(bVal);
+      }
+      
+      if (sortOrder === "asc") {
+        return aVal > bVal ? 1 : -1;
+      } else {
+        return aVal < bVal ? 1 : -1;
+      }
+    });
+
+    console.log("[SalesService] Final catalog products:", products);
+    return products;
+    
+  } catch (err) {
+    console.error("[SalesService] Error fetching catalog:", err);
+    throw err;
   }
-
+}
 async buy(userRole: string, request: BuyRequestDTO): Promise<ReceiptResponse> {
   
   const role = (userRole ?? "").trim() || "SELLER";

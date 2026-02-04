@@ -41,7 +41,7 @@ export const Form: React.FC<Props> = ({
       <h3 style={{ color: "white", textAlign: "center", marginBottom: 24 }}>
         🛒 Prodaja proizvoda
       </h3>
-
+    <h5>Product ID</h5>
       <input
         type="number"
         placeholder="Product ID"
@@ -49,7 +49,7 @@ export const Form: React.FC<Props> = ({
         onChange={e => setProductId(Number(e.target.value))}
         style={{ width: "100%", padding: 12, borderRadius: 8, marginBottom: 12 }}
       />
-
+<h5>Quantity</h5>
       <input
         type="number"
         min={1}

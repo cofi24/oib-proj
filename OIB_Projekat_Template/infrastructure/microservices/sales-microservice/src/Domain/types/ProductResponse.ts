@@ -4,4 +4,6 @@ export type ProductResponse = {
   brand: string;
   price: number;
   quantity: number;
-};
+  volumeMl?: number;
+  batchInfo?: string;
+}

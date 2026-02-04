@@ -22,6 +22,29 @@ export class SalesController {
     this.router.post("/buy", this.buy.bind(this));
   }
 
+  // Helper metoda za prosleđivanje headera
+  private forwardHeaders(req: Request): Record<string, string> {
+    const headers: Record<string, string> = {};
+    
+    if (req.headers["x-user-role"]) {
+      headers["x-user-role"] = String(req.headers["x-user-role"]);
+    }
+    if (req.headers["x-user-id"]) {
+      headers["x-user-id"] = String(req.headers["x-user-id"]);
+    }
+    if (req.headers["x-user-name"]) {
+      headers["x-user-name"] = String(req.headers["x-user-name"]);
+    }
+    if (req.headers["authorization"]) {
+      headers["authorization"] = String(req.headers["authorization"]);
+    }
+    if (req.headers["x-gateway-key"]) {
+      headers["x-gateway-key"] = String(req.headers["x-gateway-key"]);
+    }
+
+    return headers;
+  }
+
   private async getCatalog(req: Request, res: Response) {
     try {
       const rawSortOrder =
@@ -39,9 +62,11 @@ export class SalesController {
           rawSortOrder === "asc" || rawSortOrder === "desc" ? rawSortOrder : undefined,
       };
 
-      const result = await this.salesService.getCatalog(query);
+      // PROSLEDI HEADERS! ✅
+      const result = await this.salesService.getCatalog(query, this.forwardHeaders(req));
       return res.status(200).json(result);
     } catch (err: any) {
+      console.error("[SalesController] getCatalog error:", err);
       return res.status(500).json({ message: err?.message ?? "Internal server error" });
     }
   }
@@ -75,11 +100,11 @@ export class SalesController {
       return res.status(200).json(receipt);
     } catch (err: any) {
       const msg = err?.message ?? "Server error";
+      console.error("[SalesController] buy error:", err);
 
       if (msg.includes("Analytics fetch failed") || msg.includes("Storage fetch failed")) {
         return res.status(503).json({ message: msg });
       }
-      // za buy je realnije 400 za validacije / zavisne servise
       return res.status(400).json({ message: msg });
     }
   }

@@ -40,23 +40,27 @@ export const Catalog: React.FC<Props> = ({
       {!loading && products.length > 0 && (
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
-            <tr>
-              <th>Naziv</th>
-              <th>Brend</th>
-              <th>Cena</th>
-              <th>Količina</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map(p => (
-              <tr key={p.id}>
+  <tr>
+    <th>#</th>
+    <th>Naziv</th>
+    <th>Brend</th>
+    <th>Cena</th>
+    <th>Količina</th>
+  </tr>
+</thead>
+
+         <tbody>
+            {products.map((p, index) => (
+                <tr key={p.id}>
+                <td>{index + 1}.</td> {/* 👈 redni broj */}
                 <td>{p.name}</td>
                 <td>{p.brand}</td>
                 <td>{p.price} RSD</td>
                 <td>{p.quantity}</td>
-              </tr>
+                </tr>
             ))}
-          </tbody>
+            </tbody>
+
         </table>
       )}
     </div>

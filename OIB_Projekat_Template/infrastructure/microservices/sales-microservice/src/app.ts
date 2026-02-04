@@ -10,7 +10,7 @@ import { StorageClient } from "./Services/clients/StorageClient";
 import { AnalyticsClient } from "./Services/clients/AnalyticsClient";
 import { IAuditingService } from "./Domain/services/IAuditingService";
 import { AuditingService } from "./Services/AuditingService";
-
+import { ProcessingClient } from "./Services/clients/ProcessingClient";
 dotenv.config({ quiet: true });
 
 const app = express();
@@ -40,8 +40,8 @@ const analyticsBaseUrl = process.env.ANALYTICS_BASE_URL ?? "http://localhost:555
 const storageClient = new StorageClient(storageBaseUrl);
 const analyticsClient = new AnalyticsClient(analyticsBaseUrl);
 const auditingService: IAuditingService = new AuditingService();
-
-const salesService = new SalesService(productRepo, storageClient, analyticsClient,auditingService);
+const processingClient = new ProcessingClient();
+const salesService = new SalesService(productRepo, storageClient, analyticsClient,auditingService, processingClient);
 
 // CONTROLLERS
 const salesController = new SalesController(salesService);
