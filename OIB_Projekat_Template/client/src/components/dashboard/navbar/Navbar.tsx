@@ -6,11 +6,7 @@ export const DashboardNavbar: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const roleSrpski: Record<string, string> = {
-    ADMIN: "Administrator",
-    SALES_MANAGER: "Menadžer prodaje",
-    SELLER: "Prodavac",
-  };
+  
 
   const handleLogout = () => {
     logout();
@@ -111,7 +107,7 @@ export const DashboardNavbar: React.FC = () => {
                     color: 'rgba(255, 255, 255, 0.6)',
                     fontSize: '12px'
                   }}>
-                    {roleSrpski[user.role] || user.role}
+                    { user.role}
                   </div>
                 </div>
               </div>

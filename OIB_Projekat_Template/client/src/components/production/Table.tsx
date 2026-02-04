@@ -34,7 +34,7 @@ export const Table: React.FC<{ plants: ProductionPlant[] }> = ({
                 </td>
                 <td>{plantStatusSR[p.status] ?? p.status}</td>
                 <td>
-                  {new Date(p.createdAt).toLocaleString("sr-RS")}
+                  {new Date(p.createdAt).toLocaleString()}
                 </td>
               </tr>
             ))}
@@ -56,7 +56,7 @@ type ProductionPlant = {
 };
 
 const plantStatusSR: Record<string, string> = {
-  PLANTED: "ZASAĐENA",
+  PLANTED: "POSAĐENA",
   HARVESTED: "UBRANA",
 };
 

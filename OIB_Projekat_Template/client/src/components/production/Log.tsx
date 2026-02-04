@@ -1,8 +1,7 @@
 import React from "react";
 import { AuditLogDTO } from "../../models/audit/AuditLogDTO";
 
-const translate = (text: string) =>
-  text.replace("[PRODUCTION]", "[PROIZVODNJA]");
+
 
 export const Log: React.FC<{ logs: AuditLogDTO[] }> = ({ logs }) => {
   return (
@@ -18,9 +17,9 @@ export const Log: React.FC<{ logs: AuditLogDTO[] }> = ({ logs }) => {
           }}
         >
           <div style={{ fontSize: 12, opacity: 0.8 }}>
-            {new Date(l.createdAt).toLocaleString("sr-RS")} • {l.type}
+            {new Date(l.createdAt).toLocaleString()} • {l.type}
           </div>
-          <div>{translate(l.description ?? "")}</div>
+          <div>{(l.description ?? "")}</div>
         </div>
       ))}
     </div>
