@@ -37,6 +37,8 @@ export class StorageController {
 
   private async sendPackaging(req: Request, res: Response) {
     try {
+      console.log("[StorageController] Headers:", req.headers);
+    console.log("[StorageController] Body:", req.body);
       const role = this.parseRole(req);
       const amount = Number(req.body?.amount);
 

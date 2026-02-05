@@ -63,7 +63,7 @@ export const DashboardNavbar: React.FC = () => {
             fontSize: '20px',
             fontWeight: '700',
             letterSpacing: '-0.5px'
-          }}>Parfemi ERP</span>
+          }}>Parfimerija</span>
         </div>
 
         <div style={{

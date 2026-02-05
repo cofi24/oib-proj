@@ -15,12 +15,7 @@ export const DashboardPage: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const roleSrpski: Record<string, string> = {
-    ADMIN: "Administrator",
-    SALES_MANAGER: "Menadžer prodaje",
-    SELLER: "Prodavac",
-  };
-
+ 
   const dashboardCards: DashboardCard[] = [
     {
       id: "production",
@@ -71,6 +66,13 @@ export const DashboardPage: React.FC = () => {
       path: "/audit-logs",
       roles: ["ADMIN"],
     },
+    {
+      id: "users",
+      title: "Korisnici",
+      description: "Upravljanje korisnicima, uloge i osnovni podaci profila.",
+      path: "/users",
+      roles: ["ADMIN"],
+    },
   ];
 
   const filteredCards = dashboardCards.filter((card) =>
@@ -109,7 +111,7 @@ export const DashboardPage: React.FC = () => {
               fontSize: '16px',
               color: 'rgba(255, 255, 255, 0.6)'
             }}>
-              {user?.role ? roleSrpski[user.role] ?? user.role : "Korisnik"}
+              {user?.role ?  user.role : "Korisnik"}
             </div>
           </div>
         </div>

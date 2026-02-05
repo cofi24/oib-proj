@@ -43,19 +43,33 @@ export class StorageGateController {
 
   private async sendPackaging(req: Request, res: Response) {
     try {
-      const payload = req.body as SendPackagingDTO;
-
-      if (!payload.role || typeof payload.amount !== "number") {
-        return res.status(400).json({ message: "Invalid payload" });
+      console.log("[StorageController] User:", req.user);
+      console.log("[StorageController] Body:", req.body);
+      
+      const amount = Number(req.body?.amount);
+      
+      // Validacija
+      if (!Number.isFinite(amount) || amount <= 0) {
+        return res.status(400).json({ message: "Invalid amount" });
       }
 
-      await this.storageService.sendPackaging(
+      // Uzmi role iz JWT tokena, ne iz body-a!
+      const role = req.user?.role || UserRole.SELLER;
+
+      const payload: SendPackagingDTO = {
+        role: role,
+        amount: amount
+      };
+
+      const result = await this.storageService.sendPackaging(
         payload,
         this.forwardHeaders(req)
       );
 
-      return res.status(204).send();
+      // Vrati rezultat umesto 204
+      return res.status(200).json(result);
     } catch (err: any) {
+      console.error("[StorageController] Error:", err);
       return res
         .status((err as any).status ?? 500)
         .json({ message: err.message ?? "Storage error" });

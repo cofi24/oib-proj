@@ -26,10 +26,8 @@ async getCatalog(query: GetCatalogDTO, headers: Record<string, string>): Promise
   try {
     const batches = await this.processingClient.getCatalogg(headers);
     
-    console.log("[SalesService] Batches from processing:", JSON.stringify(batches, null, 2));
+     
     
-    // Mapiraj batches u proizvode
-    // Svaki batch predstavlja tip parfema sa dostupnim količinama
     let products = batches
       .filter((batch: any) => {
         // Prikaži samo batche koji imaju dostupne bočice (nisu sve prodate)
@@ -85,7 +83,7 @@ async getCatalog(query: GetCatalogDTO, headers: Record<string, string>): Promise
       }
     });
 
-    console.log("[SalesService] Final catalog products:", products);
+    
     return products;
     
   } catch (err) {
@@ -94,13 +92,12 @@ async getCatalog(query: GetCatalogDTO, headers: Record<string, string>): Promise
   }
 }
 async buy(userRole: string, request: BuyRequestDTO): Promise<ReceiptResponse> {
-  
   const role = (userRole ?? "").trim() || "SELLER";
 
-   await this.auditingService.log(
+  await this.auditingService.log(
     AuditLogType.INFO,
     `[SALES] Buy started | role=${role} | items=${request?.items?.length ?? 0}`
-  )
+  );
 
   if (!request?.items || request.items.length === 0) {
     throw new Error("Items are required.");
@@ -108,29 +105,43 @@ async buy(userRole: string, request: BuyRequestDTO): Promise<ReceiptResponse> {
   if (!request.saleType || !request.paymentMethod) {
     throw new Error("saleType and paymentMethod are required.");
   }
-  
-  // 1) rezerviši / umanji stanje i dobiješ proizvode (sa cenom/nazivom)
-  const updatedProducts = await this.productRepo.reserveProducts(request.items);
 
-  // 2) receipt items
-  const receiptItems = request.items.map((it) => {
-    const p = updatedProducts.find((x) => x.id === it.productId);
-    if (!p) throw new Error(`Internal error: missing reserved product id=${it.productId}`);
+  // UMESTO productRepo, dobij podatke iz Processing servisa!
+  const batches = await this.processingClient.getCatalogg({
+    "x-user-role": role,
+  });
 
-    const unitPrice = Number(p.price);
-    const total = unitPrice * it.quantity;
+  // Mapiraj receipt items iz batches
+  const receiptItems = request.items.map((item) => {
+    // Pronađi batch po ID-u
+    const batch = batches.find((b: any) => b.id === item.productId);
+    
+    if (!batch) {
+      throw new Error(`Batch with id=${item.productId} not found.`);
+    }
+
+    const available = (batch.bottleCount || 0) - (batch.soldCount || 0);
+    
+    if (available < item.quantity) {
+      throw new Error(
+        `Not enough stock for ${batch.perfumeType}. Available=${available}, requested=${item.quantity}.`
+      );
+    }
+
+    // Cena na osnovu volumena
+    const unitPrice = batch.bottleVolumeMl === 250 ? 139.99 : 89.99;
+    const total = unitPrice * item.quantity;
 
     return {
-      productId: p.id,
-      name: p.name,
-      quantity: it.quantity,
+      productId: batch.id,
+      name: batch.perfumeType, // ← OVDE SADA UZIMA IZ BATCH-a!
+      quantity: item.quantity,
       unitPrice,
       total,
     };
   });
 
   const grandTotal = receiptItems.reduce((sum, i) => sum + i.total, 0);
-
   const packagingAmount = request.items.reduce((sum, i) => sum + i.quantity, 0);
 
   try {
@@ -142,14 +153,15 @@ async buy(userRole: string, request: BuyRequestDTO): Promise<ReceiptResponse> {
       items: receiptItems,
       grandTotal,
     });
-     await this.auditingService.log(
+    
+    await this.auditingService.log(
       AuditLogType.INFO,
       `[SALES] Buy success | receipt=${receipt.receiptId} | total=${grandTotal}`
     );
+    
     return receipt;
   } catch (err) {
     console.error("BUY FAILED - STORAGE or ANALYTICS ERROR:", err);
-    await this.productRepo.restoreProducts(request.items);
     throw err;
   }
 }
