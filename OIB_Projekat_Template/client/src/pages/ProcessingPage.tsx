@@ -97,12 +97,37 @@ export const ProcessingPage: React.FC<Props> = ({
         <Log logs={processingLogs} />
       </div>
 
-      <div >
-          <button onClick={() => navigate(-1)}>
-           
-            Nazad
-          </button>
-        </div>
+      <div style={{ position: "relative", minHeight: "100vh" }}>
+  <button
+    onClick={() => navigate(-1)}
+    style={{
+      position: "absolute",
+      top: 20,
+      right: 20,
+      padding: "8px 14px",
+      borderRadius: 10,
+      border: "none",
+      background: "linear-gradient(135deg, #2563eb, #4f46e5)",
+      color: "#fff",
+      fontWeight: 600,
+      cursor: "pointer",
+      boxShadow: "0 6px 14px rgba(0,0,0,0.18)",
+      transition: "transform 0.15s ease, box-shadow 0.15s ease",
+    }}
+    onMouseOver={(e) => {
+      e.currentTarget.style.transform = "translateY(-1px)";
+      e.currentTarget.style.boxShadow = "0 10px 18px rgba(0,0,0,0.22)";
+    }}
+    onMouseOut={(e) => {
+      e.currentTarget.style.transform = "translateY(0)";
+      e.currentTarget.style.boxShadow = "0 6px 14px rgba(0,0,0,0.18)";
+    }}
+  >
+    ← Nazad
+  </button>
+
+  {/* ostatak stranice */}
+</div>
     </div>
   );
 };

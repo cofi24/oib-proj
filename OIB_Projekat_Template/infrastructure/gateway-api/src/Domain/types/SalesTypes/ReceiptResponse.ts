@@ -16,4 +16,5 @@ export type ReceiptResponse = {
   paymentMethod: PaymentMethod;
   items: ReceiptItem[];
   grandTotal: number;
+  qrCode?: string;
 };

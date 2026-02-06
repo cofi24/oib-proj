@@ -8,6 +8,8 @@ import {SaleType} from "../enums/SaleType";
 import {Form} from "../components/sales/Buy";
 import { ISalesAPI } from "../api/sales/ISalesAPI";
 import { useAuth } from "../hooks/useAuthHook";
+import { ReceiptResponse } from "../types/ReceiptResponse";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   
@@ -17,7 +19,7 @@ type Props = {
 export function SalesPage({ salesAPI }: Props) {
   
   const { token } = useAuth();
-
+  const navigate = useNavigate();
   /* ---------- CATALOG STATE ---------- */
   const [products, setProducts] = useState<ProductResponse[]>([]);
   const [loadingCatalog, setLoadingCatalog] = useState(false);
@@ -27,6 +29,7 @@ export function SalesPage({ salesAPI }: Props) {
   const [quantity, setQuantity] = useState(1);
   const [paymentMethod, setPaymentMethod] = useState(PaymentMethod.CASH);
   const [saleType, setSaleType] = useState(SaleType.RETAIL);
+  const [receipt, setReceipt] = useState<ReceiptResponse | null>(null);
 
   /* ---------- UI STATE ---------- */
   const [loadingBuy, setLoadingBuy] = useState(false);
@@ -63,6 +66,7 @@ export function SalesPage({ salesAPI }: Props) {
       };
 
       const receipt = await salesAPI.buy(token!, payload);
+      setReceipt(receipt);
       setResult(`Kupovina uspešna! Račun #${receipt.receiptId}`);
 
       // posle kupovine refresuj katalog
@@ -104,6 +108,48 @@ export function SalesPage({ salesAPI }: Props) {
       />
 
       {result && <p style={{ color: "green" }}>{result}</p>}
+      {receipt?.qrCode && (
+        <div style={{ marginTop: 20 }}>
+          <h3>Fiskalni QR kod</h3>
+          <img
+            src={receipt.qrCode}
+            alt="Fiscal QR Code"
+            style={{ width: 200, height: 200 }}
+          />
+        </div>
+      )}
+      <div style={{ position: "relative", minHeight: "100vh" }}>
+  <button
+    onClick={() => navigate(-1)}
+    style={{
+      position: "absolute",
+      top: 20,
+      right: 20,
+      padding: "8px 14px",
+      borderRadius: 10,
+      border: "none",
+      background: "linear-gradient(135deg, #2563eb, #4f46e5)",
+      color: "#fff",
+      fontWeight: 600,
+      cursor: "pointer",
+      boxShadow: "0 6px 14px rgba(0,0,0,0.18)",
+      transition: "transform 0.15s ease, box-shadow 0.15s ease",
+    }}
+    onMouseOver={(e) => {
+      e.currentTarget.style.transform = "translateY(-1px)";
+      e.currentTarget.style.boxShadow = "0 10px 18px rgba(0,0,0,0.22)";
+    }}
+    onMouseOut={(e) => {
+      e.currentTarget.style.transform = "translateY(0)";
+      e.currentTarget.style.boxShadow = "0 6px 14px rgba(0,0,0,0.18)";
+    }}
+  >
+    ← Nazad
+  </button>
+
+  {/* ostatak stranice */}
+</div>
+
     </>
   );
 }

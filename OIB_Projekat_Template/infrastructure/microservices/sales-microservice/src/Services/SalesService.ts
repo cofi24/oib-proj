@@ -10,6 +10,7 @@ import { AuditingService } from "./AuditingService";
 import { AuditLogType } from "../Domain/enums/AuditLogType";
 import { IAuditingService } from "../Domain/services/IAuditingService";
 import { ProcessingClient } from "./clients/ProcessingClient";
+import { generateReceiptQr } from "../helper/qrGenerator";
 
 
 
@@ -153,13 +154,31 @@ async buy(userRole: string, request: BuyRequestDTO): Promise<ReceiptResponse> {
       items: receiptItems,
       grandTotal,
     });
-    
+    // 🧾 E-FISKALIZACIJA – QR PAYLOAD
+    // ===============================
+    const qrPayload = {
+      receiptId: receipt.receiptId,
+      items: receiptItems.map(i => ({
+        productCode: i.productId,
+        productName: i.name,
+        quantity: i.quantity,
+        unitPrice: i.unitPrice,
+        totalPrice: i.total
+      })),
+      totalAmount: grandTotal,
+      createdAt: new Date().toISOString()
+    };
+
+    const qrCode = await generateReceiptQr(qrPayload);
     await this.auditingService.log(
       AuditLogType.INFO,
       `[SALES] Buy success | receipt=${receipt.receiptId} | total=${grandTotal}`
     );
     
-    return receipt;
+    return {
+  ...receipt,
+  qrCode
+};
   } catch (err) {
     console.error("BUY FAILED - STORAGE or ANALYTICS ERROR:", err);
     throw err;
