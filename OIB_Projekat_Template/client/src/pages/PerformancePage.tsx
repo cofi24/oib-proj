@@ -111,27 +111,59 @@ console.log("timeSeries:", timeSeries);
       >
         <div>
           <div style={{ fontSize: 20, fontWeight: 900 }}>Analiza performansi</div>
-          <div style={{ fontSize: 13, opacity: 0.7 }}>
-            Simulacije logističkih algoritama i pregled izveštaja.
-          </div>
+          
         </div>
+              <button
+        onClick={() => navigate(-1)}
+        style={{
+          position: "absolute",
+          top: 50,
+          right: 20,
+          padding: "8px 14px",
+          borderRadius: 10,
+          border: "none",
+          background: "linear-gradient(135deg, #2563eb, #4f46e5)",
+          color: "#fff",
+          fontWeight: 600,
+          cursor: "pointer",
+          boxShadow: "0 6px 14px rgba(0,0,0,0.18)",
+          transition: "transform 0.15s ease, box-shadow 0.15s ease",
+        }}
+        onMouseOver={(e) => {
+          e.currentTarget.style.transform = "translateY(-1px)";
+          e.currentTarget.style.boxShadow = "0 10px 18px rgba(0,0,0,0.22)";
+        }}
+        onMouseOut={(e) => {
+          e.currentTarget.style.transform = "translateY(0)";
+          e.currentTarget.style.boxShadow = "0 6px 14px rgba(0,0,0,0.18)";
+        }}
+      >
+        ← Nazad
+      </button>
+       <div
+  style={{
+    display: "flex",
+    gap: 20,
+    justifyContent: "flex-start",
+    alignItems: "center",
+  }}
+>
+  <button
+    disabled={running || loading}
+    onClick={() => runSimulation("DISTRIBUTIVNI_CENTAR")}
+    style={{ padding: "10px 12px", borderRadius: 10,marginRight: 100 }}
+  >
+    {running ? "Pokrećem..." : "Pokreni: Distributivni"}
+  </button>
 
-        <div style={{ display: "flex", gap: 10 }}>
-          <button
-            disabled={running || loading}
-            onClick={() => runSimulation("DISTRIBUTIVNI_CENTAR")}
-            style={{ padding: "10px 12px", borderRadius: 10 }}
-          >
-            {running ? "Pokrećem..." : "Pokreni: Distributivni"}
-          </button>
-          <button
-            disabled={running || loading}
-            onClick={() => runSimulation("MAGACIN")}
-            style={{ padding: "10px 12px", borderRadius: 10 }}
-          >
-            {running ? "Pokrećem..." : "Pokreni: Magacin"}
-          </button>
-        </div>
+  <button
+    disabled={running || loading}
+    onClick={() => runSimulation("MAGACIN")}
+    style={{ padding: "10px 12px", borderRadius: 10,marginRight: 200 }}
+  >
+    {running ? "Pokrećem..." : "Pokreni: Magacin"}
+  </button>
+</div>
       </div>
 
       {error ? (
@@ -175,32 +207,61 @@ console.log("timeSeries:", timeSeries);
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
         <Chart title="Trend korišćenja resursa" values={resourceSeries} valueSuffix="%" />
 
-        <div
-          style={{
-            border: "1px solid rgba(255,255,255,0.12)",
-            borderRadius: 12,
-            background: "rgba(255,255,255,0.04)",
-            padding: 12,
-          }}
-        >
-          <div style={{ fontWeight: 900, marginBottom: 8 }}>Sažetak izveštaja</div>
-          <div style={{ fontSize: 13, opacity: 0.85, whiteSpace: "pre-line", lineHeight: 1.5 }}>
-            {selected?.summary ?? (loading ? "Učitavam..." : "Izaberi izveštaj iz tabele.")}
-          </div>
+       <div style={styles.summaryContainer}>
+  <div style={styles.summaryHeader}>
+    <div style={styles.summaryTitle}>
+      <span style={styles.summaryIcon}>📋</span>
+      Sažetak izveštaja
+    </div>
+    {selected && (
+      <div style={styles.summaryBadge}>
+        ID: {selected.id}
+      </div>
+    )}
+  </div>
 
-          {selected ? (
-            <div style={{ display: "flex", gap: 10, marginTop: 12 }}>
-              <button type="button" disabled={loading} onClick={loadReports}>
-                Osveži listu
-              </button>
+  <div style={styles.summaryContent}>
+    {loading ? (
+      <div style={styles.loadingState}>
+        <div style={styles.loadingSpinner}></div>
+        <span style={styles.loadingText}>Učitavam...</span>
+      </div>
+    ) : selected?.summary ? (
+      <div style={styles.summaryText}>
+        {selected.summary}
+      </div>
+    ) : (
+      <div style={styles.emptyState}>
+        <span style={styles.emptyIcon}>👆</span>
+        <p style={styles.emptyText}>Izaberi izveštaj iz tabele da vidiš detalje</p>
+      </div>
+    )}
+  </div>
 
-              <button type="button" disabled={loading} onClick={() => onPdf(selected.id)}>
-                Preuzmi PDF
-              </button>
+  {selected && (
+    <div style={styles.summaryActions}>
+      <button 
+        type="button" 
+        disabled={loading} 
+        onClick={loadReports}
+        style={styles.btnRefresh}
+      >
+        <span style={styles.btnIcon}>↻</span>
+        Osveži listu
+      </button>
 
-            </div>
-          ) : null}
-        </div>
+      <button 
+        type="button" 
+        disabled={loading} 
+        onClick={() => onPdf(selected.id)}
+        style={styles.btnPdf}
+      >
+        <span style={styles.btnIcon}>📄</span>
+        Preuzmi PDF
+      </button>
+    </div>
+  )}
+</div>
       </div>
 
       <Table
@@ -213,36 +274,140 @@ console.log("timeSeries:", timeSeries);
         onPdf={onPdf}
       />
       <div style={{ position: "relative", minHeight: "100vh" }}>
-  <button
-    onClick={() => navigate(-1)}
-    style={{
-      position: "absolute",
-      top: 20,
-      right: 20,
-      padding: "8px 14px",
-      borderRadius: 10,
-      border: "none",
-      background: "linear-gradient(135deg, #2563eb, #4f46e5)",
-      color: "#fff",
-      fontWeight: 600,
-      cursor: "pointer",
-      boxShadow: "0 6px 14px rgba(0,0,0,0.18)",
-      transition: "transform 0.15s ease, box-shadow 0.15s ease",
-    }}
-    onMouseOver={(e) => {
-      e.currentTarget.style.transform = "translateY(-1px)";
-      e.currentTarget.style.boxShadow = "0 10px 18px rgba(0,0,0,0.22)";
-    }}
-    onMouseOut={(e) => {
-      e.currentTarget.style.transform = "translateY(0)";
-      e.currentTarget.style.boxShadow = "0 6px 14px rgba(0,0,0,0.18)";
-    }}
-  >
-    ← Nazad
-  </button>
+ 
 
   {/* ostatak stranice */}
 </div>
     </div>
   );
 }
+
+
+const styles = {
+  // ... existing styles ...
+  
+  summaryContainer: {
+    border: "1px solid rgba(255, 255, 255, 0.1)",
+    borderRadius: 12,
+    background: "#132f4c",
+    overflow: "hidden",
+    boxShadow: "0 8px 24px rgba(0, 0, 0, 0.4)",
+  },
+  summaryHeader: {
+    padding: "16px 20px",
+    background: "#0d2238",
+    borderBottom: "2px solid #1e4976",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  summaryTitle: {
+    fontSize: 18,
+    fontWeight: 700,
+    color: "#ffffff",
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+  },
+  summaryIcon: {
+    fontSize: 20,
+  },
+  summaryBadge: {
+    background: "#1e3a5f",
+    color: "#64b5f6",
+    padding: "4px 12px",
+    borderRadius: 6,
+    fontSize: 12,
+    fontWeight: 600,
+  },
+  summaryContent: {
+    padding: 24,
+    minHeight: 160,
+    background: "#0a1929",
+  },
+  summaryText: {
+    fontSize: 14,
+    color: "#e3f2fd",
+    lineHeight: 1.7,
+    whiteSpace: "pre-line",
+  },
+  loadingState: {
+    display: "flex",
+    flexDirection: "column" as const,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 12,
+    minHeight: 160,
+  },
+  loadingSpinner: {
+    width: 40,
+    height: 40,
+    border: "4px solid #1e4976",
+    borderTopColor: "#2196f3",
+    borderRadius: "50%",
+    animation: "spin 0.8s linear infinite",
+  },
+  loadingText: {
+    fontSize: 14,
+    color: "#90caf9",
+    fontWeight: 600,
+  },
+  emptyState: {
+    display: "flex",
+    flexDirection: "column" as const,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 12,
+    minHeight: 160,
+  },
+  emptyIcon: {
+    fontSize: 48,
+    opacity: 0.4,
+  },
+  emptyText: {
+    fontSize: 14,
+    color: "#64b5f6",
+    margin: 0,
+    textAlign: "center" as const,
+  },
+  summaryActions: {
+    padding: "16px 20px",
+    background: "#0d2238",
+    borderTop: "2px solid #1e4976",
+    display: "flex",
+    gap: 12,
+    justifyContent: "flex-end",
+  },
+  btnRefresh: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 8,
+    padding: "10px 18px",
+    borderRadius: 8,
+    border: "1px solid rgba(59, 130, 246, 0.5)",
+    background: "rgba(59, 130, 246, 0.1)",
+    color: "#3b82f6",
+    fontSize: 14,
+    fontWeight: 600,
+    cursor: "pointer",
+    transition: "all 0.3s ease",
+  },
+  btnPdf: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 8,
+    padding: "10px 18px",
+    borderRadius: 8,
+    border: "none",
+    background: "linear-gradient(135deg, #2196f3 0%, #1976d2 100%)",
+    color: "#ffffff",
+    fontSize: 14,
+    fontWeight: 600,
+    cursor: "pointer",
+    transition: "all 0.3s ease",
+    boxShadow: "0 4px 12px rgba(33, 150, 243, 0.3)",
+  },
+  btnIcon: {
+    fontSize: 16,
+  },
+};

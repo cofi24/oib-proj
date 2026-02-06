@@ -11,97 +11,42 @@ type Props = {
   data: Row[];
 };
 
-
 export const Top10: React.FC<Props> = ({ title, data }) => {
+  const [hoveredIndex, setHoveredIndex] = React.useState<number | null>(null);
+
   return (
-    <div style={{
-      backgroundColor: '#ffffff',
-      borderRadius: '12px',
-      padding: '24px',
-      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-      fontFamily: 'system-ui, -apple-system, sans-serif'
-    }}>
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '20px',
-        paddingBottom: '16px',
-        borderBottom: '2px solid #f0f0f0'
-      }}>
-        <div style={{
-          fontSize: '20px',
-          fontWeight: '600',
-          color: '#1a1a1a'
-        }}>{title}</div>
-        <div style={{
-          fontSize: '14px',
-          color: '#666',
-          backgroundColor: '#f5f5f5',
-          padding: '4px 12px',
-          borderRadius: '16px'
-        }}>{data?.length || 0} stavki</div>
+    <div style={styles.container}>
+      <div style={styles.header}>
+        <div style={styles.title}>{title}</div>
+        <div style={styles.badge}>{data?.length || 0} stavki</div>
       </div>
 
       {!data || data.length === 0 ? (
-        <div style={{
-          textAlign: 'center',
-          padding: '40px',
-          color: '#999',
-          fontSize: '15px'
-        }}>Nema podataka.</div>
+        <div style={styles.noData}>Nema podataka.</div>
       ) : (
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '12px'
-        }}>
+        <div style={styles.list}>
           {data.map((x, i) => (
-            <div key={i} style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '16px',
-              padding: '16px',
-              backgroundColor: '#fafafa',
-              borderRadius: '8px',
-              transition: 'all 0.2s',
-              cursor: 'pointer',
-              border: '1px solid #f0f0f0'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#f0f0f0';
-              e.currentTarget.style.transform = 'translateX(4px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#fafafa';
-              e.currentTarget.style.transform = 'translateX(0)';
-            }}>
+            <div
+              key={i}
+              style={{
+                ...styles.item,
+                ...(hoveredIndex === i ? styles.itemHover : {}),
+              }}
+              onMouseEnter={() => setHoveredIndex(i)}
+              onMouseLeave={() => setHoveredIndex(null)}
+            >
               <div style={{
-                fontSize: '18px',
-                fontWeight: '700',
-                color: i < 3 ? '#e63946' : '#666',
-                minWidth: '40px',
-                textAlign: 'center'
-              }}>#{i + 1}</div>
-              <div style={{
-                flex: 1
+                ...styles.rank,
+                color: i < 3 ? '#10b981' : '#90caf9'
               }}>
-                <div style={{
-                  fontSize: '16px',
-                  fontWeight: '500',
-                  color: '#2d2d2d',
-                  marginBottom: '6px'
-                }}>{x.naziv}</div>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  fontSize: '14px',
-                  color: '#666'
-                }}>
-                  <span style={{ fontWeight: '500' }}>{x.prodaja} kom</span>
-                  <span style={{ color: '#ccc' }}>•</span>
-                  <span style={{ color: '#16a34a', fontWeight: '600' }}>{(x.prihod)}</span>
+                #{i + 1}
+              </div>
+              <div style={styles.content}>
+                <div style={styles.itemName}>{x.naziv}</div>
+                <div style={styles.itemStats}>
+                  <span style={styles.quantity}>{x.prodaja} kom</span>
+                  <span style={styles.separator}>•</span>
+                  <span style={styles.revenue}>{x.prihod.toLocaleString("sr-RS")} RSD</span>
                 </div>
               </div>
             </div>
@@ -110,4 +55,98 @@ export const Top10: React.FC<Props> = ({ title, data }) => {
       )}
     </div>
   );
+};
+
+const styles: Record<string, React.CSSProperties> = {
+  container: {
+    border: "1px solid rgba(255, 255, 255, 0.1)",
+    borderRadius: 12,
+    overflow: "hidden",
+    background: "#132f4c",
+    boxShadow: "0 8px 24px rgba(0, 0, 0, 0.4)",
+  },
+  header: {
+    padding: "16px 20px",
+    borderBottom: "2px solid #1e4976",
+    background: "#0d2238",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 700,
+    color: "#ffffff",
+  },
+  badge: {
+    fontSize: 12,
+    color: "#90caf9",
+    background: "rgba(33, 150, 243, 0.15)",
+    padding: "4px 12px",
+    borderRadius: 16,
+    fontWeight: 600,
+  },
+  noData: {
+    textAlign: "center",
+    padding: 40,
+    color: "#64b5f6",
+    fontSize: 15,
+    background: "#0a1929",
+  },
+  list: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 10,
+    padding: 16,
+    background: "#0a1929",
+  },
+  item: {
+    display: "flex",
+    alignItems: "center",
+    gap: 16,
+    padding: 16,
+    background: "#132f4c",
+    borderRadius: 8,
+    border: "1px solid rgba(255, 255, 255, 0.1)",
+    transition: "all 0.2s",
+    cursor: "pointer",
+  },
+  itemHover: {
+    background: "#1e4976",
+    transform: "translateX(4px)",
+    boxShadow: "0 4px 12px rgba(33, 150, 243, 0.2)",
+  },
+  rank: {
+    fontSize: 18,
+    fontWeight: 700,
+    minWidth: 40,
+    textAlign: "center",
+  },
+  content: {
+    flex: 1,
+  },
+  itemName: {
+    fontSize: 16,
+    fontWeight: 600,
+    color: "#ffffff",
+    marginBottom: 6,
+  },
+  itemStats: {
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+    fontSize: 14,
+  },
+  quantity: {
+    fontWeight: 600,
+    color: "#90caf9",
+  },
+  separator: {
+    color: "rgba(255, 255, 255, 0.3)",
+  },
+  revenue: {
+    color: "#10b981",
+    fontWeight: 700,
+    fontFamily: "monospace",
+  },
 };
