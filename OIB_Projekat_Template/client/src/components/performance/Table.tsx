@@ -142,7 +142,9 @@ const styles: { [key: string]: React.CSSProperties } = {
     border: "1px solid rgba(255, 255, 255, 0.1)",
     borderRadius: 12,
     boxShadow: "0 8px 24px rgba(0, 0, 0, 0.4)",
-    overflow: "hidden",
+    overflow: "auto",
+    scrollbarWidth: "thin",
+    maxHeight: "420px"
   },
   header: {
     padding: "20px 24px",
@@ -151,6 +153,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
+
   },
   title: {
     margin: 0,

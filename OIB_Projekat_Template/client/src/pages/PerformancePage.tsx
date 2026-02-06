@@ -117,7 +117,7 @@ console.log("timeSeries:", timeSeries);
         onClick={() => navigate(-1)}
         style={{
           position: "absolute",
-          top: 50,
+          top: 60,
           right: 20,
           padding: "8px 14px",
           borderRadius: 10,
@@ -148,21 +148,47 @@ console.log("timeSeries:", timeSeries);
     alignItems: "center",
   }}
 >
+ <div
+  style={{
+    display: "flex",
+    gap: 50,
+    alignItems: "center",
+    marginTop: 12,
+  }}
+>
   <button
     disabled={running || loading}
     onClick={() => runSimulation("DISTRIBUTIVNI_CENTAR")}
-    style={{ padding: "10px 12px", borderRadius: 10,marginRight: 100 }}
+    style={{
+      padding: "10px 16px",
+      borderRadius: 10,
+      border: "1px solid #1976d2",
+      background: "#e3f2fd",
+      color: "#1976d2",
+      fontWeight: 600,
+      cursor: running || loading ? "not-allowed" : "pointer",
+    }}
   >
-    {running ? "Pokrećem..." : "Pokreni: Distributivni"}
+    {running ? "Pokrećem..." : "🏭 Distributivni centar"}
   </button>
 
   <button
     disabled={running || loading}
     onClick={() => runSimulation("MAGACIN")}
-    style={{ padding: "10px 12px", borderRadius: 10,marginRight: 200 }}
+    style={{
+      padding: "10px 26px",
+      borderRadius: 10,
+      border: "1px solid #2e7d32",
+      background: "#e8f5e9",
+      color: "#2e7d32",
+      fontWeight: 600,
+      cursor: running || loading ? "not-allowed" : "pointer",
+      marginRight: 150,
+    }}
   >
-    {running ? "Pokrećem..." : "Pokreni: Magacin"}
+    {running ? "Pokrećem..." : "📦 Magacin"}
   </button>
+</div>
 </div>
       </div>
 
@@ -191,16 +217,18 @@ console.log("timeSeries:", timeSeries);
         <Card
           title="Ukupno izveštaja"
           value={loading ? "..." : reports.length}
-          hint="Izveštaji se čuvaju u bazi (DESC)"
+          hint="Čuvanje izveštaja u bazi "
         />
-        <Card title="Vreme izvršavanja" value={kpiExecution.toFixed(0)} suffix="ms" hint="Niže je bolje" />
-        <Card title="Stopa uspeha" value={kpiSuccess.toFixed(0)} suffix="%" hint="Više je bolje" />
         <Card title="Resursi" value={kpiResources.toFixed(0)} suffix="%" hint="Opterećenje sistema" />
+        <Card title="Vreme izvršavanja" value={kpiExecution.toFixed(0)} suffix="ms" hint="milisekunde" />
+        <Card title="Stopa uspeha" value={kpiSuccess.toFixed(0)} suffix="%" hint="postotak" />
+       
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
-        <Chart title="Trend vremena izvršavanja" values={timeSeries} valueSuffix="s" />
         <Chart title="Trend uspešnosti" values={successSeries} valueSuffix="%" />
+        <Chart title="Trend vremena izvršavanja" values={timeSeries} valueSuffix="s" />
+        
         
       </div>
 
@@ -211,7 +239,7 @@ console.log("timeSeries:", timeSeries);
   <div style={styles.summaryHeader}>
     <div style={styles.summaryTitle}>
       <span style={styles.summaryIcon}>📋</span>
-      Sažetak izveštaja
+      Ukratko
     </div>
     {selected && (
       <div style={styles.summaryBadge}>

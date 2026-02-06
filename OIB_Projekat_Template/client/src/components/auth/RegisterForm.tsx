@@ -23,6 +23,8 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ authAPI }) => {
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
+  const [imagePreview, setImagePreview] = React.useState<string | null>(null);
+
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -34,6 +36,17 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ authAPI }) => {
     setError("");
     setSuccess("");
   };
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const url = e.target.value;
+  handleChange(e); // tvoja postojeća funkcija
+  
+  // Validacija i preview
+  if (url.trim()) {
+    setImagePreview(url);
+  } else {
+    setImagePreview(null);
+  }
+};
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -181,39 +194,54 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ authAPI }) => {
   />
 </div>
 
-<div>
-  <label
-    htmlFor="lastName"
-    style={{ display: "block", marginBottom: "8px", fontSize: "14px", fontWeight: 600 }}
-  >
-    Last name
-  </label>
-  <input
-    type="text"
-    id="lastName"
-    name="lastName"
-    value={formData.lastName}
-    onChange={handleChange}
-    placeholder="Your last name"
-    required
-    disabled={isLoading}
-  />
-</div>
-
       <div>
-        <label htmlFor="profileImage" style={{ display: "block", marginBottom: "8px", fontSize: "14px", fontWeight: 600 }}>
-          Profile Image URL <span style={{ color: "var(--win11-text-tertiary)", fontWeight: 400 }}>(Optional)</span>
+        <label
+          htmlFor="lastName"
+          style={{ display: "block", marginBottom: "8px", fontSize: "14px", fontWeight: 600 }}
+        >
+          Last name
         </label>
         <input
-          type="url"
-          id="profileImage"
-          name="profileImage"
-          value={formData.profileImage}
+          type="text"
+          id="lastName"
+          name="lastName"
+          value={formData.lastName}
           onChange={handleChange}
-          placeholder="https://example.com/avatar.jpg"
+          placeholder="Your last name"
+          required
           disabled={isLoading}
         />
       </div>
+
+      <div style={styles.imageSection}>
+    <label htmlFor="profileImage" style={styles.label}>
+      Profile Image URL{" "}
+      <span style={styles.optional}>(Optional)</span>
+    </label>
+    
+    <input
+      type="url"
+      id="profileImage"
+      name="profileImage"
+      value={formData.profileImage}
+      onChange={handleImageChange}
+      placeholder="https://example.com/avatar.jpg"
+      disabled={isLoading}
+      style={styles.input}
+    />
+    
+    {/* Preview slike */}
+    {imagePreview && (
+      <div style={styles.previewContainer}>
+        <img
+          src={imagePreview}
+          alt="Preview"
+          style={styles.previewImage}
+          onError={() => setImagePreview(null)} // ukloni ako URL ne radi
+        />
+      </div>
+    )}
+  </div>
 
       {error && (
         <div
@@ -268,4 +296,47 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ authAPI }) => {
       </button>
     </form>
   );
+};
+const styles: Record<string, React.CSSProperties> = {
+  imageSection: {
+    marginBottom: 20,
+  },
+  label: {
+    display: "block",
+    marginBottom: 8,
+    fontSize: 12,
+    fontWeight: 700,
+    color: "#90caf9",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+  },
+  optional: {
+    color: "#64b5f6",
+    fontWeight: 400,
+    textTransform: "none",
+  },
+  input: {
+    width: "100%",
+    padding: "12px 16px",
+    borderRadius: 8,
+    border: "1px solid rgba(255, 255, 255, 0.15)",
+    fontSize: 15,
+    outline: "none",
+    boxSizing: "border-box",
+    background: "#0a1929",
+    color: "#ffffff",
+  },
+  previewContainer: {
+    marginTop: 12,
+    display: "flex",
+    justifyContent: "center",
+  },
+  previewImage: {
+    width: 80,
+    height: 80,
+    borderRadius: "50%",
+    objectFit: "cover",
+    border: "2px solid #2196f3",
+    boxShadow: "0 4px 12px rgba(33, 150, 243, 0.3)",
+  },
 };

@@ -408,6 +408,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     margin: "0 auto",
     background: "#0a1929",
     minHeight: "100vh",
+    
   },
   pageHeader: {
     display: "flex",
@@ -459,18 +460,18 @@ const styles: { [key: string]: React.CSSProperties } = {
     boxShadow: "0 4px 12px rgba(33, 150, 243, 0.3)",
   },
   btnSecondary: {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: "8px",
-    padding: "10px 20px",
-    borderRadius: "8px",
-    fontSize: "14px",
-    fontWeight: 600,
-    cursor: "pointer",
-    background: "#1e3a5f",
-    color: "#ffffff",
-    border: "1px solid #2962ff",
-    transition: "all 0.3s ease",
+   position: "absolute",
+          top: 50,
+          right: 25,
+          padding: "8px 14px",
+          borderRadius: 10,
+          border: "none",
+          background: "linear-gradient(135deg, #2563eb, #4f46e5)",
+          color: "#fff",
+          fontWeight: 600,
+          cursor: "pointer",
+          boxShadow: "0 6px 14px rgba(0,0,0,0.18)",
+          transition: "transform 0.15s ease, box-shadow 0.15s ease",
   },
   btnSecondaryModal: {
     display: "inline-flex",
@@ -541,12 +542,16 @@ const styles: { [key: string]: React.CSSProperties } = {
     background: "#132f4c",
     border: "1px solid #1e4976",
     borderRadius: "12px",
-    overflow: "hidden",
+   
     boxShadow: "0 8px 24px rgba(0, 0, 0, 0.4)",
+    maxHeight: "1020px",
+    overflow: "auto",
+     scrollbarWidth: "thin",
   },
   dataTable: {
     width: "100%",
     borderCollapse: "collapse",
+    
   },
   th: {
     padding: "16px",

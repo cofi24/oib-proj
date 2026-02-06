@@ -52,7 +52,10 @@ export const Summary: React.FC<Props> = ({ summary, top10Revenue }) => {
       </div>
     </div>
   );
-};const styles: Record<string, React.CSSProperties> = {
+};
+
+
+const styles: Record<string, React.CSSProperties> = {
   grid: {
     display: "grid",
     gridTemplateColumns: "repeat(4, 1fr)",

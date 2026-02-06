@@ -11,7 +11,6 @@ type Props = {
   disabled: boolean;
   onStart: () => void;
 };
-
 export const Form: React.FC<Props> = ({
   perfumeType,
   setPerfumeType,
@@ -23,63 +22,32 @@ export const Form: React.FC<Props> = ({
   disabled,
   onStart,
 }) => {
+  const isValid = !disabled && perfumeType.trim() && bottleCount > 0;
+
   return (
-    <div style={{
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      borderRadius: '16px',
-      padding: '32px',
-      boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
-      marginBottom: '24px'
-    }}>
-      <h3 style={{
-        color: 'white',
-        marginBottom: '28px',
-        fontSize: '24px',
-        fontWeight: '600',
-        textAlign: 'center'
-      }}>
+    <div style={styles.container}>
+      <h3 style={styles.title}>
         🧴 Prerada u Parfeme
       </h3>
 
-      <div style={{
-        marginBottom: '20px'
-      }}>
+      <div style={styles.inputGroup}>
         <input
           value={perfumeType}
           onChange={e => setPerfumeType(e.target.value)}
           placeholder="Tip parfema (npr. Lavanda)"
           autoComplete="off"
-          style={{
-            width: '100%',
-            padding: '12px 16px',
-            borderRadius: '8px',
-            border: 'none',
-            fontSize: '15px',
-            outline: 'none',
-            boxSizing: 'border-box'
-          }}
+          style={styles.input}
         />
       </div>
 
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr auto',
-        gap: '12px',
-        marginBottom: error ? '16px' : '0'
-      }}>
+      <div style={styles.controls}>
         <input
           type="number"
           min={1}
           value={bottleCount}
           onChange={e => setBottleCount(Number(e.target.value))}
           placeholder="Broj boca"
-          style={{
-            padding: '12px 16px',
-            borderRadius: '8px',
-            border: 'none',
-            fontSize: '15px',
-            outline: 'none'
-          }}
+          style={styles.input}
         />
 
         <select
@@ -87,14 +55,7 @@ export const Form: React.FC<Props> = ({
           onChange={e =>
             setBottleVolumeMl(Number(e.target.value) as 150 | 250)
           }
-          style={{
-            padding: '12px 16px',
-            borderRadius: '8px',
-            border: 'none',
-            fontSize: '15px',
-            outline: 'none',
-            cursor: 'pointer'
-          }}
+          style={styles.select}
         >
           <option value={150}>150 ml</option>
           <option value={250}>250 ml</option>
@@ -102,18 +63,12 @@ export const Form: React.FC<Props> = ({
 
         <button
           onClick={onStart}
-          disabled={disabled || !perfumeType.trim() || bottleCount <= 0}
+          disabled={!isValid}
           style={{
-            padding: '12px 24px',
-            borderRadius: '8px',
-            border: 'none',
-            background: (!disabled && perfumeType.trim() && bottleCount > 0) ? '#10b981' : '#94a3b8',
-            color: 'white',
-            fontWeight: '600',
-            cursor: (!disabled && perfumeType.trim() && bottleCount > 0) ? 'pointer' : 'not-allowed',
-            transition: 'all 0.2s',
-            fontSize: '15px',
-            whiteSpace: 'nowrap'
+            ...styles.button,
+            background: isValid ? '#10b981' : '#475569',
+            cursor: isValid ? 'pointer' : 'not-allowed',
+            boxShadow: isValid ? '0 4px 12px rgba(16, 185, 129, 0.3)' : 'none',
           }}
         >
           ✨ Započni
@@ -121,19 +76,78 @@ export const Form: React.FC<Props> = ({
       </div>
 
       {error && (
-        <div style={{
-          marginTop: '16px',
-          padding: '12px 16px',
-          background: 'rgba(239, 68, 68, 0.15)',
-          border: '1px solid rgba(239, 68, 68, 0.3)',
-          borderRadius: '8px',
-          color: '#fee2e2',
-          fontSize: '14px',
-          fontWeight: '500'
-        }}>
+        <div style={styles.error}>
           ⚠️ {error}
         </div>
       )}
     </div>
   );
+};
+
+const styles: Record<string, React.CSSProperties> = {
+  container: {
+    background: 'linear-gradient(135deg, #132f4c 0%, #0d2238 100%)',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+    borderRadius: 16,
+    padding: 32,
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+    marginBottom: 24,
+  },
+  title: {
+    color: '#ffffff',
+    marginBottom: 28,
+    fontSize: 24,
+    fontWeight: 700,
+    textAlign: 'center',
+    margin: '0 0 28px 0',
+  },
+  inputGroup: {
+    marginBottom: 20,
+  },
+  input: {
+    width: '100%',
+    padding: '12px 16px',
+    borderRadius: 8,
+    border: '1px solid rgba(255, 255, 255, 0.15)',
+    fontSize: 15,
+    outline: 'none',
+    boxSizing: 'border-box',
+    background: '#0a1929',
+    color: '#ffffff',
+  },
+  controls: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr auto',
+    gap: 12,
+  },
+  select: {
+    padding: '12px 16px',
+    borderRadius: 8,
+    border: '1px solid rgba(255, 255, 255, 0.15)',
+    fontSize: 15,
+    outline: 'none',
+    cursor: 'pointer',
+    background: '#0a1929',
+    color: '#ffffff',
+  },
+  button: {
+    padding: '12px 24px',
+    borderRadius: 8,
+    border: 'none',
+    color: '#ffffff',
+    fontWeight: 700,
+    transition: 'all 0.2s',
+    fontSize: 15,
+    whiteSpace: 'nowrap',
+  },
+  error: {
+    marginTop: 16,
+    padding: '12px 16px',
+    background: 'rgba(239, 68, 68, 0.15)',
+    border: '1px solid rgba(239, 68, 68, 0.3)',
+    borderRadius: 8,
+    color: '#fecaca',
+    fontSize: 14,
+    fontWeight: 600,
+  },
 };
