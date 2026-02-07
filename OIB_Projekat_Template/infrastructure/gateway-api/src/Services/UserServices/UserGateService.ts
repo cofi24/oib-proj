@@ -86,6 +86,7 @@ export class UserGatewayService implements IUserGateService {
 async getCurrentUser(userId: number): Promise<UserDTO> {
   try {
     console.log("UserGatewayService: Fetching current user", userId);
+    
     const response = await this.userClient.get<UserDTO>(`/users/${userId}`);
     return response.data;
   } catch (error) {

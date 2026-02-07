@@ -406,7 +406,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: "24px",
     maxWidth: "1400px",
     margin: "0 auto",
-    background: "#0a1929",
+    background: "#272626",
     minHeight: "100vh",
     
   },

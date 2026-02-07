@@ -110,11 +110,9 @@ export class SalesAnalysisController {
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="report-${id}-${Date.now()}.pdf"`
+      `attachment; filename="report-${id}.pdf"`
     );
-    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
-    res.setHeader("Pragma", "no-cache");
-    res.setHeader("Expires", "0");
+   res.setHeader("Cache-Control", "no-store, max-age=0");
 
     res.status(200).send(buffer);
   } catch (e) {

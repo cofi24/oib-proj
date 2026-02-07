@@ -1,4 +1,4 @@
-export class OilStrengthCalculator {
+export class OilCalculator {
   private static readonly MAX_OIL = 4.0;
   private static readonly PRECISION = 100;
 

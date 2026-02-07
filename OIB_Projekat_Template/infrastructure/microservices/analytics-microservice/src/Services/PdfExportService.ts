@@ -77,7 +77,7 @@ async generateReceiptPdf(receipt: FiscalReceiptDTO): Promise<Buffer> {
     doc.moveDown(1.5);
 
     /* ===== BASIC INFO ===== */
-    doc.fontSize(13).font("Helvetica");
+    doc.fontSize(11).font("Helvetica");
     doc.text(`Broj racuna: ${receipt.brojRacuna}`);
     doc.text(`Datum: ${new Date(receipt.createdAt)}`);
     doc.text(`Tip prodaje: ${receipt.tipProdaje}`);
@@ -86,14 +86,14 @@ async generateReceiptPdf(receipt: FiscalReceiptDTO): Promise<Buffer> {
     doc.moveDown(1.5);
 
     /* ===== ITEMS ===== */
-    doc.font("Helvetica-Bold").text("Stavke");
-    doc.moveDown(0.5);
+   
+   
 
     doc.font("Helvetica-Bold");
     doc.text("Parfem", 50);
-    doc.text("Kol.", 400, doc.y - 14);
-    doc.text("Cena", 450, doc.y - 13);
-    doc.text("Ukupno", 540, doc.y - 11);
+    doc.text("Kol.", 300, doc.y - 14);
+    doc.text("Cena", 350, doc.y - 13);
+    doc.text("Ukupno", 440, doc.y - 11);
 
     doc.moveDown(0.3);
     doc.moveTo(50, doc.y).lineTo(545, doc.y).stroke();
@@ -103,16 +103,16 @@ async generateReceiptPdf(receipt: FiscalReceiptDTO): Promise<Buffer> {
 
     receipt.items.forEach((item) => {
       doc.text(item.perfumeName, 50, doc.y, { width: 230 });
-      doc.text(item.quantity.toString(), 400, doc.y);
-      doc.text(`${item.unitPrice} EUR`, 460, doc.y);
-      doc.text(`${item.lineTotal} EUR`, 540, doc.y);
+      doc.text(item.quantity.toString(), 300, doc.y);
+      doc.text(`${item.unitPrice} EUR`, 360, doc.y);
+      doc.text(`${item.lineTotal} EUR`, 440, doc.y);
       doc.moveDown(0.8);
     });
 
     doc.moveDown(1);
 
     /* ===== TOTAL ===== */
-    doc.moveTo(50, doc.y).lineTo(600, doc.y).stroke();
+    doc.moveTo(50, doc.y).lineTo(545, doc.y).stroke();
     doc.moveDown(1);
 
     doc.font("Helvetica-Bold").fontSize(11);

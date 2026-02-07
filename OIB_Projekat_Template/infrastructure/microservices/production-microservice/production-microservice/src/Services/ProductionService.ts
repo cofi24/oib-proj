@@ -8,12 +8,14 @@ import { HarvestDTO } from "../Domain/DTOs/HarvestDTO";
 import { PlantDTO } from "../Domain/DTOs/PlantDTO";
 import { PlantStatus } from "../Domain/enums/PlantStatus";
 import { AuditLogType } from "../Domain/enums/AuditLogType";
-import { OilStrengthCalculator } from "../Domain/helpers/OilStrengthCalculator";
-import { RandomGenerator } from "../Domain/helpers/RandomGenerator";
+import { OilCalculator } from "../Domain/helpers/OilStrengthCalculator";
+
 
 export class ProductionService implements IProductionService {
   constructor(private readonly audit: IAuditingService) {}
-
+ private generateOilStrength(): number {
+    return Math.round((1 + Math.random() * 4) * 100) / 100;
+  }
   private repo() {
     return AppDataSource.getRepository(Plant);
   }
@@ -23,7 +25,7 @@ export class ProductionService implements IProductionService {
   }
 
   async plant(data: PlantCreateDTO): Promise<PlantDTO> {
-    const originalOil = RandomGenerator.generateOilStrength();
+    const originalOil = this.generateOilStrength();
 
     const plant = this.repo().create({
       plantType: data.plantType.trim(),
@@ -31,15 +33,15 @@ export class ProductionService implements IProductionService {
       status: PlantStatus.PLANTED,
     });
 
-    if (OilStrengthCalculator.needsAutoBalance(plant.oilStrength)) {
-      const balancedOil = OilStrengthCalculator.autoBalance(
+    if (OilCalculator.needsAutoBalance(plant.oilStrength)) {
+      const balancedOil = OilCalculator.autoBalance(
         plant.oilStrength,
         plant.oilStrength
       );
 
       plant.oilStrength = balancedOil;
 
-      const factor = OilStrengthCalculator.getBalanceFactor(originalOil);
+      const factor = OilCalculator.getBalanceFactor(originalOil);
 
       await this.audit.log(
         AuditLogType.INFO,
@@ -65,7 +67,7 @@ export class ProductionService implements IProductionService {
     }
 
     const oldOil = plant.oilStrength;
-    const newOil = OilStrengthCalculator.adjustByPercent(oldOil, data.percent);
+    const newOil = OilCalculator.adjustByPercent(oldOil, data.percent);
 
     plant.oilStrength = newOil;
 
@@ -121,7 +123,7 @@ export class ProductionService implements IProductionService {
     plantType: string,
     processedOilStrength: number
   ): Promise<PlantDTO> {
-    const originalOil = RandomGenerator.generateOilStrength();
+    const originalOil = this.generateOilStrength();
 
     const plant = this.repo().create({
       plantType: plantType.trim(),
@@ -129,7 +131,7 @@ export class ProductionService implements IProductionService {
       status: PlantStatus.PLANTED,
     });
 
-    const balancedOil = OilStrengthCalculator.autoBalance(
+    const balancedOil = OilCalculator.autoBalance(
       originalOil,
       processedOilStrength
     );
@@ -138,7 +140,7 @@ export class ProductionService implements IProductionService {
 
     const saved = await this.repo().save(plant);
 
-    const factor = OilStrengthCalculator.getBalanceFactor(processedOilStrength);
+    const factor = OilCalculator.getBalanceFactor(processedOilStrength);
 
     await this.audit.log(
       AuditLogType.INFO,

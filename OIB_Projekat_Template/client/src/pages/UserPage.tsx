@@ -115,7 +115,7 @@ export const UserPage: React.FC<{
     style={{
       position: "absolute",
       top: 80,
-      right: 20,
+      right: 30,
       padding: "8px 14px",
       borderRadius: 10,
       border: "none",

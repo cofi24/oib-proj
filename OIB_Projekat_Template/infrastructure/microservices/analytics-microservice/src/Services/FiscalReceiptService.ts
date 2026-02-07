@@ -19,14 +19,14 @@ export class FiscalReceiptService implements IFiscalReceiptService {
 
   async create(data: CreateFiscalReceiptDTO): Promise<FiscalReceiptDTO> {
     try {
-      console.log("FiscalReceiptService Received data:", JSON.stringify(data, null, 2));
+      console.log("FiscalReceiptService primljena data:", JSON.stringify(data, null, 2));
 
       if (!data.brojRacuna || data.brojRacuna.trim() === "") {
-        throw new Error("Account number is required");
+        throw new Error("Potreban je broj računa.");
       }
 
       if (!data.items || !Array.isArray(data.items) || data.items.length === 0) {
-        throw new Error("Items are required for the fiscal account.");
+        throw new Error(" Račun mora imati barem jednu stavku.");
       }
 
       const items: FiscalReceiptItem[] = data.items.map((i) => {
@@ -35,7 +35,7 @@ export class FiscalReceiptService implements IFiscalReceiptService {
         const lineTotal = Number(i.lineTotal || (unit * qty)); 
 
         if (!i.perfumeId || qty <= 0 || unit <= 0) {
-          throw new Error(`Invalid invoice item: ${JSON.stringify(i)}`);
+          throw new Error(`Losi itemi: ${JSON.stringify(i)}`);
         }
 
         return Object.assign(new FiscalReceiptItem(), {
@@ -53,7 +53,7 @@ export class FiscalReceiptService implements IFiscalReceiptService {
         items.reduce((s, x) => s + Number(x.lineTotal), 0).toFixed(2)
       );
 
-      console.log("[FiscalReceiptService] Creating receipt with:", {
+      console.log("[FiscalReceiptService] Kreiranje racuna:", {
         brojRacuna: data.brojRacuna,
         ukupnoStavki,
         ukupnaKolicina,
@@ -72,7 +72,7 @@ export class FiscalReceiptService implements IFiscalReceiptService {
 
       const saved = await this.repo.save(receipt);
 
-      console.log("FiscalReceiptService Receipt saved successfully:", saved.brojRacuna);
+      console.log("FiscalReceiptService sacuvan:", saved.brojRacuna);
 
       await this.auditing.log(
         AuditLogType.INFO,
@@ -100,7 +100,7 @@ export class FiscalReceiptService implements IFiscalReceiptService {
 
   async getAll(): Promise<FiscalReceiptDTO[]> {
     const list = await this.repo.find({
-      order: { createdAt: "DESC" },
+      order: { createdAt: "ASC" },
       relations: ["items"],
     });
     return list.map((x) => this.toDTO(x));
@@ -112,7 +112,7 @@ export class FiscalReceiptService implements IFiscalReceiptService {
       relations: ["items"],
     });
     if (!receipt) {
-      throw new Error("Fiscal receipt not found");
+      throw new Error("Racun nije pronađen");
     }
     return this.toDTO(receipt);
   }

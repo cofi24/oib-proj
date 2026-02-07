@@ -141,13 +141,11 @@ export class AnalyticsGateController {
       );
 
       res.setHeader("Content-Type", "application/pdf");
-res.setHeader(
-  "Content-Disposition",
-  `attachment; filename="TEST-${Date.now()}.pdf"`
-);
-res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
-res.setHeader("Pragma", "no-cache");
-res.setHeader("Expires", "0");
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="racun-${Date.now()}.pdf"`
+      );
+      res.setHeader("Cache-Control", "no-store");
       return res.status(200).send(buffer);
     } catch (error) {
       if(error instanceof Error){
@@ -201,13 +199,11 @@ res.setHeader("Expires", "0");
       );
 
       res.setHeader("Content-Type", "application/pdf");
-res.setHeader(
-  "Content-Disposition",
-  `attachment; filename="TESTxxxx-${Date.now()}.pdf"`
-);
-res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
-res.setHeader("Pragma", "no-cache");
-res.setHeader("Expires", "0");
+          res.setHeader(
+            "Content-Disposition",
+            `attachment; filename="racun-${Date.now()}.pdf"`
+          );
+          res.setHeader("Cache-Control", "no-store");
       return res.status(200).send(buffer);
     } catch (error) {
       if(error instanceof Error){

@@ -69,64 +69,6 @@ export class SalesAnalysisService implements ISalesAnalysisService {
     return this.toDTO(report);
   }
 
-  async getSummary(period: string): Promise<SalesSummaryDTO> {
-    const normalized = this.normalizePeriod(period);
-    const qb = this.receiptRepo.createQueryBuilder("r");
-    
-    this.applyPeriodFilter(qb, normalized);
-
-    const row = await qb
-      .select("COALESCE(SUM(r.ukupnaKolicina),0)", "ukupnoParfema")
-      .addSelect("COALESCE(SUM(r.iznosZaNaplatu),0)", "ukupnaZarada")
-      .getRawOne();
-
-    return {
-      period: normalized as SalesSummaryDTO["period"],
-      ukupnaProdaja: Number(row.ukupnoParfema),
-      ukupnaZarada: Number(row.ukupnaZarada),
-      ukupnoParfema: Number(row.ukupnoParfema),
-    };
-  }
-
-  async getTrend(period?: string): Promise<SalesTrendDTO[]> {
-    const normalized = this.normalizePeriod(period ?? "UKUPNO");
-    const qb = this.receiptRepo.createQueryBuilder("r");
-    
-    this.applyPeriodFilter(qb, normalized);
-
-    const rows = await qb
-      .select("DATE(r.createdAt)", "label")
-      .addSelect("COALESCE(SUM(r.ukupnaKolicina),0)", "prodato")
-      .addSelect("COALESCE(SUM(r.iznosZaNaplatu),0)", "zarada")
-      .groupBy("label")
-      .orderBy("label", "ASC")
-      .getRawMany();
-
-    return rows.map(r => ({
-      label: String(r.label),
-      prodato: Number(r.prodato),
-      zarada: Number(r.zarada),
-    }));
-  }
-
-  async getTop10(): Promise<TopPerfumeDTO[]> {
-    const rows = await this.receiptRepo
-      .createQueryBuilder("r")
-      .innerJoin("r.items", "i")
-      .select("i.perfumeName", "naziv")
-      .addSelect("SUM(i.quantity)", "prodaja")
-      .addSelect("SUM(i.lineTotal)", "prihod")
-      .groupBy("i.perfumeName")
-      .orderBy("prihod", "DESC")
-      .limit(10)
-      .getRawMany();
-
-    return rows.map(r => ({
-      naziv: String(r.naziv),
-      prodaja: Number(r.prodaja),
-      prihod: Number(r.prihod),
-    }));
-  }
 
   async getTop10Revenue(): Promise<{ ukupno: number }> {
     const rows = await this.receiptRepo
@@ -177,6 +119,67 @@ export class SalesAnalysisService implements ISalesAnalysisService {
 
     return this.toDTO(saved);
   }
+
+  async getSummary(period: string): Promise<SalesSummaryDTO> {
+    const normalized = this.normalizePeriod(period);
+    const qb = this.receiptRepo.createQueryBuilder("r");
+    
+    this.applyPeriodFilter(qb, normalized);
+
+    const row = await qb
+      .select("COALESCE(SUM(r.ukupnaKolicina),0)", "ukupnoParfema")
+      .addSelect("COALESCE(SUM(r.iznosZaNaplatu),0)", "ukupnaZarada")
+      .getRawOne();
+    const ukupno = Number(row.ukupnoParfema)
+    return {
+      period: normalized as SalesSummaryDTO["period"],
+      ukupnaProdaja: ukupno,
+      ukupnaZarada: Number(row.ukupnaZarada),
+      ukupnoParfema: ukupno,
+    };
+  }
+
+  async getTrend(period?: string): Promise<SalesTrendDTO[]> {
+    const normalized = this.normalizePeriod(period ?? "UKUPNO");
+    const qb = this.receiptRepo.createQueryBuilder("r");
+    
+    this.applyPeriodFilter(qb, normalized);
+
+    const rows = await qb
+      .select("DATE(r.createdAt)", "label")
+      .addSelect("COALESCE(SUM(r.ukupnaKolicina),0)", "prodato")
+      .addSelect("COALESCE(SUM(r.iznosZaNaplatu),0)", "zarada")
+      .groupBy("label")
+      .orderBy("label", "ASC")
+      .getRawMany();
+
+    return rows.map(r => ({
+      label: String(r.label),
+      prodato: Number(r.prodato),
+      zarada: Number(r.zarada),
+    }));
+  }
+
+  async getTop10(): Promise<TopPerfumeDTO[]> {
+    const rows = await this.receiptRepo
+      .createQueryBuilder("r")
+      .innerJoin("r.items", "i")
+      .select("i.perfumeName", "naziv")
+      .addSelect("SUM(i.quantity)", "prodaja")
+      .addSelect("SUM(i.lineTotal)", "prihod")
+      .groupBy("i.perfumeName")
+      .orderBy("prihod", "DESC")
+      .limit(10)
+      .getRawMany();
+
+    return rows.map(r => ({
+      naziv: String(r.naziv),
+      prodaja: Number(r.prodaja),
+      prihod: Number(r.prihod),
+    }));
+  }
+
+  
 
   private toDTO(entity: SalesAnalysisReport): SalesAnalysisReportDTO {
     return {

@@ -3,7 +3,7 @@ import { CreateUserDTO } from "../DTOs/CreateUserDTO";
 import { UpdateUserDTO } from "../DTOs/UpdateUserDTO";
 
 export interface IUserGateService {
-  // Users
+
   getAllUsers(): Promise<UserDTO[]>;
   getUserById(id: number): Promise<UserDTO>;
   createUser(data: CreateUserDTO): Promise<UserDTO>;
