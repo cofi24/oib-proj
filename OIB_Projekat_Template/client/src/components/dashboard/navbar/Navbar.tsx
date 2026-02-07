@@ -5,7 +5,7 @@ import { useAuth } from "../../../hooks/useAuthHook";
 export const DashboardNavbar: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-
+  const {me} = useAuth();
   
 
   const handleLogout = () => {
@@ -78,20 +78,20 @@ export const DashboardNavbar: React.FC = () => {
                 alignItems: 'center',
                 gap: '12px'
               }}>
-                <div style={{
-                  width: '42px',
-                  height: '42px',
-                  borderRadius: '50%',
-                  backgroundColor: '#3b82f6',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#ffffff',
-                  fontSize: '16px',
-                  fontWeight: '600'
-                }}>
-                  {user.username.charAt(0).toUpperCase()}
-                </div>
+                {me?.profileImage ? (
+                  <img
+                    src={me.profileImage}
+                    alt="Profile"
+                    style={{
+                      width: 42,
+                      height: 42,
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                    }}
+                  />
+                ) : (
+                  <span>{me?.username?.charAt(0)}</span>
+                )}
 
                 <div style={{
                   display: 'flex',

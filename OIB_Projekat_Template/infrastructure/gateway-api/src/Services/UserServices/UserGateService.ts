@@ -83,7 +83,16 @@ export class UserGatewayService implements IUserGateService {
       throw new Error("Failed to update user");
     }
   }
-
+async getCurrentUser(userId: number): Promise<UserDTO> {
+  try {
+    console.log("UserGatewayService: Fetching current user", userId);
+    const response = await this.userClient.get<UserDTO>(`/users/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error("UserGatewayService: Get current user error");
+    throw new Error("Failed to fetch current user");
+  }
+}
   async deleteUser(id: number, token?: string): Promise<void> {
     try {
       console.log("UserGatewayService: Deleting user", id);

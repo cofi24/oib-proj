@@ -14,7 +14,16 @@ export class UserGateController {
   }
 
   private initializeRoutes(): void {
-    
+     this.router.get(
+    "/users/me",
+    authenticate,
+    authorize(
+      UserRole.ADMIN,
+      UserRole.SELLER,
+      UserRole.SALES_MANAGER
+    ),
+    this.getMe.bind(this)
+  );
     this.router.get(
       "/users", 
       authenticate, 
@@ -48,6 +57,7 @@ export class UserGateController {
     authorize(UserRole.ADMIN),
     this.deleteUser.bind(this)
   );
+  
   }
   
   private async getAllUsers(req: Request, res: Response): Promise<void> {
@@ -103,7 +113,22 @@ export class UserGateController {
   }
 }
 
+private async getMe(req: Request, res: Response): Promise<void> {
+  try {
+    const userId = (req as any).user?.id; // iz JWT-a (Gateway već zna)
+    
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
 
+    const user = await this.userService.getCurrentUser(userId);
+    res.status(200).json(user);
+  } catch (err) {
+    console.error("Get current user error:", err);
+    res.status(500).json({ message: "Failed to fetch current user" });
+  }
+}
 
  private async updateUser(req: Request, res: Response): Promise<void> {
   try {

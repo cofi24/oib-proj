@@ -9,4 +9,6 @@ export interface IUserGateService {
   createUser(data: CreateUserDTO): Promise<UserDTO>;
   updateUser(id: number, data: UpdateUserDTO): Promise<UserDTO>;
   deleteUser(id: number): Promise<void>;
+
+  getCurrentUser(userId: number): Promise<UserDTO>;
 }   

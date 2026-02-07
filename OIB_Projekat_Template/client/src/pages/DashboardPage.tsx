@@ -13,6 +13,7 @@ type DashboardCard = {
 
 export const DashboardPage: React.FC = () => {
   const { user } = useAuth();
+  const {me} = useAuth();
   const navigate = useNavigate();
 
  

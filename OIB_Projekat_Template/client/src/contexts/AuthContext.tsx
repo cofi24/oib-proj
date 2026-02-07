@@ -4,7 +4,7 @@ import { isTokenExpired } from "../helpers/expiration_jwt_validate";
 import { readValueByKey, removeValueByKey, saveValueByKey } from "../helpers/local_storage";
 import { AuthContextType } from "../types/AuthContextType";
 import { AuthTokenClaimsType } from "../types/AuthTokenClaimsType";
-
+import { UserDTO } from "../models/users/UserDTO";
 // Create the context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -12,6 +12,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<AuthTokenClaimsType | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [me, setMe] = useState<UserDTO | null>(null);
 
   // Load token from localStorage on mount
   useEffect(() => {
@@ -36,6 +37,24 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setIsLoading(false);
   }, []);
 
+  useEffect(() => {
+  if (!token) {
+    setMe(null);
+    return;
+  }
+
+  fetch("http://localhost:4000/api/v1/users/me", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then(res => res.json())
+    .then(data => setMe(data))
+    .catch(() => setMe(null));
+}, [token]);
+
+
+
   const login = (newToken: string) => {
     const claims = decodeJWT(newToken);
 
@@ -58,6 +77,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const value: AuthContextType = {
     user,
+    me,
     token,
     login,
     logout,
