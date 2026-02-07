@@ -16,14 +16,14 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ authAPI }) => {
     password: "",
     role: UserRole.SELLER,
     firstName: "",
-     lastName: "",
+    lastName: "",
     profileImage: "",
   });
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
-  const [imagePreview, setImagePreview] = React.useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -36,31 +36,30 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ authAPI }) => {
     setError("");
     setSuccess("");
   };
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const url = e.target.value;
-  handleChange(e); // tvoja postojeća funkcija
-  
-  // Validacija i preview
-  if (url.trim()) {
-    setImagePreview(url);
-  } else {
-    setImagePreview(null);
-  }
-};
+    const url = e.target.value;
+    handleChange(e);
+
+    if (url.trim()) {
+      setImagePreview(url);
+    } else {
+      setImagePreview(null);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess("");
 
-    // Validation
     if (formData.password !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError("Lozinke se ne poklapaju.");
       return;
     }
 
     if (formData.password.length < 6) {
-      setError("Password must be at least 6 characters long.");
+      setError("Lozinka mora imati najmanje 6 karaktera.");
       return;
     }
 
@@ -70,9 +69,8 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ authAPI }) => {
       const response = await authAPI.register(formData);
 
       if (response.success) {
-        setSuccess(response.message || "Registration successful!");
-        
-        // Auto-login if token is provided
+        setSuccess(response.message || "Registracija uspešna!");
+
         if (response.token) {
           login(response.token);
           setTimeout(() => {
@@ -80,232 +78,273 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ authAPI }) => {
           }, 1500);
         }
       } else {
-        setError(response.message || "Registration failed. Please try again.");
+        setError(response.message || "Registracija neuspešna. Pokušajte ponovo.");
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || "An error occurred. Please try again.");
+      setError(err.response?.data?.message || "Došlo je do greške. Pokušajte ponovo.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <div>
-        <label htmlFor="username" style={{ display: "block", marginBottom: "8px", fontSize: "14px", fontWeight: 600 }}>
-          Username
-        </label>
-        <input
-          type="text"
-          id="username"
-          name="username"
-          value={formData.username}
-          onChange={handleChange}
-          placeholder="Choose a username"
-          required
-          disabled={isLoading}
-        />
+    <div style={styles.container}>
+      <div style={styles.header}>
+        <h2 style={styles.title}>📝 Registracija</h2>
+        <p style={styles.subtitle}>Napravite novi nalog</p>
       </div>
 
-      <div>
-        <label htmlFor="email" style={{ display: "block", marginBottom: "8px", fontSize: "14px", fontWeight: 600 }}>
-          Email
-        </label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          placeholder="your.email@example.com"
-          required
-          disabled={isLoading}
-        />
-      </div>
+      <form onSubmit={handleSubmit} style={styles.form}>
+        <div style={styles.grid}>
+          <div style={styles.inputGroup}>
+            <label htmlFor="username" style={styles.label}>
+              Korisničko ime
+            </label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              placeholder="Izaberite korisničko ime"
+              required
+              disabled={isLoading}
+              style={styles.input}
+            />
+          </div>
 
-      <div>
-        <label htmlFor="role" style={{ display: "block", marginBottom: "8px", fontSize: "14px", fontWeight: 600 }}>
-          Role
-        </label>
-        <select
-          id="role"
-          name="role"
-          value={formData.role}
-          onChange={handleChange}
-          required
-          disabled={isLoading}
-        >
-          <option value={UserRole.SELLER}>Seller</option>
-          <option value={UserRole.ADMIN}>Admin</option>
-          <option value={UserRole.SALES_MANAGER}>Sales Manager</option>
-        </select>
-      </div>
+          <div style={styles.inputGroup}>
+            <label htmlFor="email" style={styles.label}>
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="vas.email@primer.com"
+              required
+              disabled={isLoading}
+              style={styles.input}
+            />
+          </div>
 
-      <div>
-        <label htmlFor="password" style={{ display: "block", marginBottom: "8px", fontSize: "14px", fontWeight: 600 }}>
-          Password
-        </label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          placeholder="Create a password (min 6 characters)"
-          required
-          disabled={isLoading}
-        />
-      </div>
+          <div style={styles.inputGroup}>
+            <label htmlFor="firstName" style={styles.label}>
+              Ime
+            </label>
+            <input
+              type="text"
+              id="firstName"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleChange}
+              placeholder="Vaše ime"
+              required
+              disabled={isLoading}
+              style={styles.input}
+            />
+          </div>
 
-      <div>
-        <label htmlFor="confirmPassword" style={{ display: "block", marginBottom: "8px", fontSize: "14px", fontWeight: 600 }}>
-          Confirm Password
-        </label>
-        <input
-          type="password"
-          id="confirmPassword"
-          name="confirmPassword"
-          value={confirmPassword}
-          onChange={(e) => {
-            setConfirmPassword(e.target.value);
-            setError("");
-          }}
-          placeholder="Re-enter your password"
-          required
-          disabled={isLoading}
-        />
-      </div>
-          <div>
-  <label
-    htmlFor="firstName"
-    style={{ display: "block", marginBottom: "8px", fontSize: "14px", fontWeight: 600 }}
-  >
-    First name
-  </label>
-  <input
-    type="text"
-    id="firstName"
-    name="firstName"
-    value={formData.firstName}
-    onChange={handleChange}
-    placeholder="Your first name"
-    required
-    disabled={isLoading}
-  />
-</div>
+          <div style={styles.inputGroup}>
+            <label htmlFor="lastName" style={styles.label}>
+              Prezime
+            </label>
+            <input
+              type="text"
+              id="lastName"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleChange}
+              placeholder="Vaše prezime"
+              required
+              disabled={isLoading}
+              style={styles.input}
+            />
+          </div>
 
-      <div>
-        <label
-          htmlFor="lastName"
-          style={{ display: "block", marginBottom: "8px", fontSize: "14px", fontWeight: 600 }}
-        >
-          Last name
-        </label>
-        <input
-          type="text"
-          id="lastName"
-          name="lastName"
-          value={formData.lastName}
-          onChange={handleChange}
-          placeholder="Your last name"
-          required
-          disabled={isLoading}
-        />
-      </div>
+          
 
-      <div style={styles.imageSection}>
-    <label htmlFor="profileImage" style={styles.label}>
-      Profile Image URL{" "}
-      <span style={styles.optional}>(Optional)</span>
-    </label>
-    
-    <input
-      type="url"
-      id="profileImage"
-      name="profileImage"
-      value={formData.profileImage}
-      onChange={handleImageChange}
-      placeholder="https://example.com/avatar.jpg"
-      disabled={isLoading}
-      style={styles.input}
-    />
-    
-    {/* Preview slike */}
-    {imagePreview && (
-      <div style={styles.previewContainer}>
-        <img
-          src={imagePreview}
-          alt="Preview"
-          style={styles.previewImage}
-          onError={() => setImagePreview(null)} // ukloni ako URL ne radi
-        />
-      </div>
-    )}
-  </div>
+          <div style={styles.inputGroup}>
+            <label htmlFor="password" style={styles.label}>
+              Lozinka
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Minimalno 6 karaktera"
+              required
+              disabled={isLoading}
+              style={styles.input}
+            />
+          </div>
 
-      {error && (
-        <div
-          className="card"
-          style={{
-            padding: "12px 16px",
-            backgroundColor: "rgba(196, 43, 28, 0.15)",
-            borderColor: "var(--win11-close-hover)",
-          }}
-        >
-          <div className="flex items-center gap-2">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="var(--win11-close-hover)">
-              <path d="M8 2a6 6 0 100 12A6 6 0 008 2zm0 1a5 5 0 110 10A5 5 0 018 3zm0 2a.5.5 0 01.5.5v3a.5.5 0 01-1 0v-3A.5.5 0 018 5zm0 6a.75.75 0 110 1.5.75.75 0 010-1.5z"/>
-            </svg>
-            <span style={{ fontSize: "13px", color: "var(--win11-text-primary)" }}>{error}</span>
+          <div style={styles.inputGroup}>
+            <label htmlFor="confirmPassword" style={styles.label}>
+              Potvrdi lozinku
+            </label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              value={confirmPassword}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                setError("");
+              }}
+              placeholder="Ponovo unesite lozinku"
+              required
+              disabled={isLoading}
+              style={styles.input}
+            />
+          </div>
+          <div style={styles.inputGroup}>
+            <label htmlFor="role" style={styles.label} >
+              Rola
+            </label>
+            <select
+              id="role"
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              required
+              disabled={isLoading}
+              style={styles.select}
+            >
+              <option value={UserRole.SELLER}>Prodavac</option>
+              <option value={UserRole.ADMIN}>Administrator</option>
+              <option value={UserRole.SALES_MANAGER}>Menadžer prodaje</option>
+            </select>
+          </div>
+
+          <div style={styles.inputGroupFull}>
+            <label htmlFor="profileImage" style={styles.label}>
+              Profilna slika URL <span style={styles.optional}>(opciono)</span>
+            </label>
+            <input
+              type="url"
+              id="profileImage"
+              name="profileImage"
+              value={formData.profileImage}
+              onChange={handleImageChange}
+              placeholder="https://primer.com/slika.jpg"
+              disabled={isLoading}
+              style={styles.input}
+            />
+
+            {imagePreview && (
+              <div style={styles.previewContainer}>
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  style={styles.previewImage}
+                  onError={() => setImagePreview(null)}
+                />
+              </div>
+            )}
           </div>
         </div>
-      )}
 
-      {success && (
-        <div
-          className="card"
-          style={{
-            padding: "12px 16px",
-            backgroundColor: "rgba(16, 124, 16, 0.15)",
-            borderColor: "#107c10",
-          }}
-        >
-          <div className="flex items-center gap-2">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="#107c10">
-              <path d="M8 2a6 6 0 110 12A6 6 0 018 2zm2.354 4.146a.5.5 0 010 .708l-3 3a.5.5 0 01-.708 0l-1.5-1.5a.5.5 0 11.708-.708L7 8.793l2.646-2.647a.5.5 0 01.708 0z"/>
-            </svg>
-            <span style={{ fontSize: "13px", color: "var(--win11-text-primary)" }}>{success}</span>
+        {error && (
+          <div style={styles.errorContainer}>
+            <span style={styles.errorIcon}>⚠️</span>
+            <span style={styles.errorText}>{error}</span>
           </div>
-        </div>
-      )}
-
-      <button
-        type="submit"
-        className="btn btn-accent"
-        disabled={isLoading}
-        style={{ marginTop: "8px" }}
-      >
-        {isLoading ? (
-          <div className="flex items-center gap-2">
-            <div className="spinner" style={{ width: "16px", height: "16px", borderWidth: "2px" }}></div>
-            <span>Creating account...</span>
-          </div>
-        ) : (
-          "Register"
         )}
-      </button>
-    </form>
+
+        {success && (
+          <div style={styles.successContainer}>
+            <span style={styles.successIcon}>✓</span>
+            <span style={styles.successText}>{success}</span>
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={isLoading}
+          style={{
+            ...styles.btnSubmit,
+            opacity: isLoading ? 0.6 : 1,
+            cursor: isLoading ? "not-allowed" : "pointer",
+          }}
+        >
+          {isLoading ? (
+            <div style={styles.loadingContent}>
+              <div style={styles.spinner}></div>
+              <span>Kreiranje naloga...</span>
+            </div>
+          ) : (
+            <div style={styles.buttonContent}>
+              <span style={styles.buttonIcon}>📝</span>
+              Registruj se
+            </div>
+          )}
+        </button>
+      </form>
+    </div>
   );
 };
-const styles: Record<string, React.CSSProperties> = {
-  imageSection: {
-    marginBottom: 20,
+
+const styles: { [key: string]: React.CSSProperties } = {
+  container: {
+    maxWidth: 700,
+    width: "100%",
+    background: "#132f4c",
+    border: "1px solid rgba(255, 255, 255, 0.1)",
+    borderRadius: 16,
+    boxShadow: "0 20px 60px rgba(0, 0, 0, 0.5)",
+    overflow: "hidden",
+     maxHeight: "70vh", 
+  overflowY: "auto",
+  },
+  header: {
+    padding: "32px 32px 24px 32px",
+    background: "#0d2238",
+    borderBottom: "2px solid #1e4976",
+    textAlign: "center",
+  },
+  title: {
+    margin: 0,
+    fontSize: 28,
+    fontWeight: 700,
+    color: "#ffffff",
+    marginBottom: 8,
+  },
+  subtitle: {
+    margin: 0,
+    fontSize: 14,
+    color: "#90caf9",
+  },
+  form: {
+    padding: 32,
+    display: "flex",
+    flexDirection: "column",
+    gap: 24,
+  },
+  grid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(2, 1fr)",
+    gap: 20,
+  },
+  inputGroup: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 8,
+    
+  },
+  inputGroupFull: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 8,
+    gridColumn: "1 / -1",
   },
   label: {
-    display: "block",
-    marginBottom: 8,
-    fontSize: 12,
-    fontWeight: 700,
+    fontSize: 13,
+    fontWeight: 600,
     color: "#90caf9",
     textTransform: "uppercase",
     letterSpacing: 0.5,
@@ -316,15 +355,25 @@ const styles: Record<string, React.CSSProperties> = {
     textTransform: "none",
   },
   input: {
-    width: "100%",
-    padding: "12px 16px",
+    padding: "12px 14px",
     borderRadius: 8,
     border: "1px solid rgba(255, 255, 255, 0.15)",
-    fontSize: 15,
-    outline: "none",
-    boxSizing: "border-box",
-    background: "#0a1929",
+    backgroundColor: "#1e3a5f",
     color: "#ffffff",
+    fontSize: 14,
+    outline: "none",
+    transition: "all 0.3s ease",
+  },
+  select: {
+    padding: "12px 14px",
+    borderRadius: 8,
+    border: "1px solid rgba(255, 255, 255, 0.15)",
+    backgroundColor: "#1e3a5f",
+    color: "#ffffff",
+    fontSize: 14,
+    outline: "none",
+    cursor: "pointer",
+    transition: "all 0.3s ease",
   },
   previewContainer: {
     marginTop: 12,
@@ -338,5 +387,75 @@ const styles: Record<string, React.CSSProperties> = {
     objectFit: "cover",
     border: "2px solid #2196f3",
     boxShadow: "0 4px 12px rgba(33, 150, 243, 0.3)",
+  },
+  errorContainer: {
+    padding: 16,
+    background: "rgba(239, 68, 68, 0.15)",
+    border: "1px solid rgba(239, 68, 68, 0.3)",
+    borderRadius: 8,
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+  },
+  errorIcon: {
+    fontSize: 20,
+  },
+  errorText: {
+    color: "#fca5a5",
+    fontSize: 14,
+    fontWeight: 500,
+  },
+  successContainer: {
+    padding: 16,
+    background: "rgba(16, 185, 129, 0.15)",
+    border: "1px solid rgba(16, 185, 129, 0.3)",
+    borderRadius: 8,
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+  },
+  successIcon: {
+    fontSize: 20,
+    color: "#10b981",
+  },
+  successText: {
+    color: "#6ee7b7",
+    fontSize: 14,
+    fontWeight: 500,
+  },
+  btnSubmit: {
+    padding: "16px 24px",
+    borderRadius: 8,
+    border: "none",
+    background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+    color: "#ffffff",
+    fontWeight: 700,
+    fontSize: 16,
+    transition: "all 0.3s ease",
+    boxShadow: "0 4px 16px rgba(16, 185, 129, 0.4)",
+    marginTop: 8,
+  },
+  buttonContent: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+  },
+  buttonIcon: {
+    fontSize: 20,
+  },
+  loadingContent: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 12,
+  },
+  spinner: {
+    width: 18,
+    height: 18,
+    border: "3px solid rgba(255, 255, 255, 0.3)",
+    borderTopColor: "#ffffff",
+    borderRadius: "50%",
+    animation: "spin 0.8s linear infinite",
   },
 };
