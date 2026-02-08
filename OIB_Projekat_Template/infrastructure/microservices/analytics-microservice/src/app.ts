@@ -5,16 +5,16 @@ import dotenv from 'dotenv';
 import { Db } from "./Database/DbConnectionPool";
  import { SalesAnalysisController } from "./WebAPI/controllers/SalesAnalysisController";
 import { FiscalReceiptController } from "./WebAPI/controllers/FiscalReceiptController";
-import { ISalesAnalysisService } from "./Domain/services/ISalesAnalysisService";
+import { ISalesAnalysisService } from "./Domain/services/IAnalysisService";
 import { SalesAnalysisService } from "./Services/SalesAnalysisService";
-import { IFiscalReceiptService } from "./Domain/services/IFiscalReceiptService";
-import { FiscalReceiptService } from "./Services/FiscalReceiptService";
+import { IFiscalReceiptService } from "./Domain/services/IReceiptService";
+import { FiscalReceiptService } from "./Services/ReceiptService";
 import { IPdfExportService } from "./Domain/services/IPdfExportService";
 import { PdfExportService } from "./Services/PdfExportService";
 import { AuditingService } from "./Services/AuditingService";
 import { IAuditingService } from "./Domain/services/IAuditingService";
 import { SalesAnalysisReport } from "./Domain/models/SalesAnalysis";
-import { FiscalReceipt } from "./Domain/models/FiscalReceipt";
+import { FiscalReceipt } from "./Domain/models/Receipt";
 
 
 

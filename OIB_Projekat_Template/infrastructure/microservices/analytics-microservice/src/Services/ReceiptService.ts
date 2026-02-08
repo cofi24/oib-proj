@@ -1,12 +1,12 @@
 import { Repository } from "typeorm";
-import { FiscalReceipt } from "../Domain/models/FiscalReceipt";
-import { IFiscalReceiptService } from "../Domain/services/IFiscalReceiptService";
-import { FiscalReceiptDTO } from "../Domain/DTOs/FiscalReceiptDTO";
-import { FiscalReceiptItem } from "../Domain/models/FiscalReceiptItem";
+import { FiscalReceipt } from "../Domain/models/Receipt";
+import { IFiscalReceiptService } from "../Domain/services/IReceiptService";
+import { FiscalReceiptDTO } from "../Domain/DTOs/ReceiptDTO";
+import { FiscalReceiptItem } from "../Domain/models/ReceiptItem";
 import { IAuditingService } from "../Domain/services/IAuditingService";
 import { AuditLogType } from "../Domain/enums/AuditLogType";
 import { IPdfExportService } from "../Domain/services/IPdfExportService";
-import { CreateFiscalReceiptDTO } from "../Domain/DTOs/CreateFiscalReceiptDTO";
+import { CreateFiscalReceiptDTO } from "../Domain/DTOs/CreateReceiptDTO";
 
 
 
@@ -53,7 +53,7 @@ export class FiscalReceiptService implements IFiscalReceiptService {
         items.reduce((s, x) => s + Number(x.lineTotal), 0).toFixed(2)
       );
 
-      console.log("[FiscalReceiptService] Kreiranje racuna:", {
+      console.log(" Kreiranje racuna:", {
         brojRacuna: data.brojRacuna,
         ukupnoStavki,
         ukupnaKolicina,
@@ -72,7 +72,7 @@ export class FiscalReceiptService implements IFiscalReceiptService {
 
       const saved = await this.repo.save(receipt);
 
-      console.log("FiscalReceiptService sacuvan:", saved.brojRacuna);
+      console.log("Racun sacuvan:", saved.brojRacuna);
 
       await this.auditing.log(
         AuditLogType.INFO,
@@ -87,7 +87,7 @@ export class FiscalReceiptService implements IFiscalReceiptService {
           message = err.message;
         }
 
-        console.error("[FiscalReceiptService] Error:", message);
+        console.error("Error:", message);
 
         await this.auditing.log(
           AuditLogType.ERROR,

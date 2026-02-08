@@ -34,9 +34,9 @@ export class UserGatewayService implements IUserGateService {
 
   async getAllUsers(): Promise<UserDTO[]> {
     try {
-      console.log("UserGatewayService: Fetching all users from User service");
+       
       const response = await this.userClient.get<UserDTO[]>("/users");
-      console.log("UserGatewayService: Found", response.data.length, "users");
+      
       return response.data;
     } catch (error) {
       console.error("UserGatewayService: Get all users error:");
@@ -46,9 +46,9 @@ export class UserGatewayService implements IUserGateService {
 
   async getUserById(id: number): Promise<UserDTO> { 
     try {
-      console.log("UserGateService: Fetching user", id, "from User service");
+     
       const response = await this.userClient.get<UserDTO>(`/users/${id}`);
-      console.log("UserGateService: User found:", response.data.username);
+      
       return response.data;
     } catch (error) {
       console.error("UserGateService: Get user by ID error.");

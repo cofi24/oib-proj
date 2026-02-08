@@ -121,12 +121,20 @@ export const Form: React.FC<Props> = ({
         <div style={styles.section}>
           <label style={styles.sectionLabel}>Uberi useve</label>
           <div style={styles.row}>
-            <input
+            <select
               value={harvestType}
               onChange={(e) => setHarvestType(e.target.value)}
-              placeholder="Tip za berbu"
-              style={styles.input}
-            />
+              style={styles.select}
+            >
+              <option value="">Izaberi biljku za berbu</option>
+              {plants
+                .filter((p) => p.status === "PLANTED")
+                .map((p) => (
+                  <option key={p.id} value={p.plantType}>
+                    #{p.id} – {p.plantType}
+                  </option>
+                ))}
+            </select>
 
             <input
               type="number"

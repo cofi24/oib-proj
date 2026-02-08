@@ -1,6 +1,6 @@
 import { Router,Request,Response } from "express";
-import { IFiscalReceiptService } from "../../Domain/services/IFiscalReceiptService";
-import { FiscalReceiptDTO } from "../../Domain/DTOs/FiscalReceiptDTO";
+import { IFiscalReceiptService } from "../../Domain/services/IReceiptService";
+import { FiscalReceiptDTO } from "../../Domain/DTOs/ReceiptDTO";
 
 
 export class FiscalReceiptController {

@@ -1,5 +1,5 @@
-import { FiscalReceiptDTO } from "../DTOs/FiscalReceiptDTO";
-import { SalesAnalysisReportDTO } from "../DTOs/SalesAnalysisReportDTO";
+import { FiscalReceiptDTO } from "../DTOs/ReceiptDTO";
+import { SalesAnalysisReportDTO } from "../DTOs/SalesReportDTO";
 
 export interface IPdfExportService {
   generateReportPdf(report: SalesAnalysisReportDTO): Promise<Buffer>;

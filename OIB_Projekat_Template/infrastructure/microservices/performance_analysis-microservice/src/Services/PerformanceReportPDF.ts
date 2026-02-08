@@ -2,31 +2,6 @@ import PDFDocument from 'pdfkit';
 import { PerformanceReport } from '../Domain/models/PerformanceReport';
 
 
-
-const fmtNumber = (v: any, digits = 2): string => {
-  const n = Number(v);
-  if (!Number.isFinite(n)) return "N/A";
-  return n.toFixed(digits);
-};
-
-const fmtInt = (v: any): string => {
-  const n = Number(v);
-  if (!Number.isFinite(n)) return "N/A";
-  return String(Math.round(n));
-};
-
-const fmtPercent = (v: any): string => {
-  const n = Number(v);
-  if (!Number.isFinite(n)) return "N/A";
-  return `${n.toFixed(2)}%`;
-};
-
-const safeText = (v: any): string => {
-  if (v === null || v === undefined) return "N/A";
-  const s = String(v).trim();
-  return s.length ? s : "N/A";
-};
-
 export function generatePerformanceReportPdf(report: PerformanceReport): Promise<Buffer> {
   return new Promise((resolve, reject) => {
     try {
@@ -79,3 +54,22 @@ export function generatePerformanceReportPdf(report: PerformanceReport): Promise
     }
   });
 }
+
+
+const fmtInt = (v: any): string => {
+  const n = Number(v);
+  if (!Number.isFinite(n)) return "N/A";
+  return String(Math.round(n));
+};
+
+const fmtPercent = (v: any): string => {
+  const n = Number(v);
+  if (!Number.isFinite(n)) return "N/A";
+  return `${n.toFixed(2)}%`;
+};
+
+const safeText = (v: any): string => {
+  if (v === null || v === undefined) return "N/A";
+  const s = String(v).trim();
+  return s.length ? s : "N/A";
+};

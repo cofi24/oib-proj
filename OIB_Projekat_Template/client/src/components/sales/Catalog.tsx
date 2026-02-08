@@ -9,7 +9,7 @@ type Props = {
 export const Catalog: React.FC<Props> = ({
   products,
   loading,
-  onRefresh,
+  
 }) => {
   return (
     <div style={styles.container}>
@@ -19,14 +19,7 @@ export const Catalog: React.FC<Props> = ({
           <h3 style={styles.title}>📦 Katalog proizvoda</h3>
           <div style={styles.badge}>Ukupno: {products.length}</div>
         </div>
-        <button 
-          onClick={onRefresh} 
-          disabled={loading}
-          style={styles.btnRefresh}
-        >
-          <span style={styles.btnIcon}>🔄</span>
-          Osveži
-        </button>
+        
       </div>
 
       <div style={styles.tableContainer}>
@@ -57,7 +50,7 @@ export const Catalog: React.FC<Props> = ({
               {products.map((p, index) => (
                 <tr key={p.id} style={styles.tableRow}>
                   <td style={styles.td}>
-                    <span style={styles.indexBadge}>{index + 1}</span>
+                    <span style={styles.indexBadge}>{p.id}</span>
                   </td>
                   <td style={styles.td}>
                     <span style={styles.productName}>{p.name}</span>

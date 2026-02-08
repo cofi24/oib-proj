@@ -26,7 +26,7 @@ export class ProcessingService implements IProcessingService {
 
     await this.audit.log(
       AuditLogType.INFO,
-      `Start processing: perfume=${data.perfumeType}, bottles=${data.bottleCount}x${data.bottleVolumeMl}ml, total=${totalMl}ml`
+      `Start processing: parfem=${data.perfumeType}, boca=${data.bottleCount}x${data.bottleVolumeMl}ml, ukupno=${totalMl}ml`
     );
 
     const harvest = await this.production.harvest(
@@ -39,9 +39,9 @@ export class ProcessingService implements IProcessingService {
     if (!harvest || typeof harvest.harvested !== "number") {
       await this.audit.log(
         AuditLogType.ERROR,
-        "Production harvest failed"
+        "Neuspesno"
       );
-      throw new Error("Production harvest failed");
+      throw new Error("Nesupesno");
     }
 
     const batch = this.repo.create({
@@ -71,7 +71,7 @@ export class ProcessingService implements IProcessingService {
   async getById(id: number): Promise<ProcessedBatchDTO> {
     const batch = await this.repo.findOne({ where: { id } });
     if (!batch) {
-      throw new Error("Processed batch not found");
+      throw new Error("Nije pronadjen");
     }
     return batch;
   }

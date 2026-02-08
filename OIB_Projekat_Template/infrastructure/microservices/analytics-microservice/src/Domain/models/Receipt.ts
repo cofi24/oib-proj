@@ -1,5 +1,5 @@
 import {Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany} from "typeorm";
-import { FiscalReceiptItem } from "./FiscalReceiptItem";
+import { FiscalReceiptItem } from "./ReceiptItem";
 
 
 @Entity("fiscal_receipts")

@@ -1,7 +1,7 @@
 import PDFDocument from 'pdfkit';
 import { IPdfExportService } from '../Domain/services/IPdfExportService';
-import{ FiscalReceiptDTO } from '../Domain/DTOs/FiscalReceiptDTO';
-import { SalesAnalysisReportDTO } from '../Domain/DTOs/SalesAnalysisReportDTO';
+import{ FiscalReceiptDTO } from '../Domain/DTOs/ReceiptDTO';
+import { SalesAnalysisReportDTO } from '../Domain/DTOs/SalesReportDTO';
 
 
 

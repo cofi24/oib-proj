@@ -24,6 +24,7 @@ export const Table: React.FC<{
                 <tr style={styles.headerRow}>
                   <th style={styles.th}>ID</th>
                   <th style={styles.th}>Parfem</th>
+                  <th style={styles.th}>Sadnja</th>
                   <th style={styles.th}>Bočice</th>
                   <th style={styles.th}>Zapremina</th>
                   <th style={styles.th}>Biljke</th>
@@ -33,10 +34,15 @@ export const Table: React.FC<{
                 {amount.map(b => (
                   <tr key={b.id} style={styles.row}>
                     <td style={styles.td}>{b.id}</td>
+                    <td style={styles.td}>
+  {b.perfumeName || b.perfumeType}
+</td>
                     <td style={styles.td}>{b.perfumeType}</td>
+                     
                     <td style={styles.td}>{b.bottleCount}</td>
                     <td style={styles.td}>{b.bottleVolumeMl} ml</td>
                     <td style={styles.td}>{b.plantsNeeded}</td>
+                    
                   </tr>
                 ))}
               </tbody>

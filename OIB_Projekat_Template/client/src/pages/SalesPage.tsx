@@ -68,12 +68,23 @@ export function SalesPage({ salesAPI }: Props) {
       const receipt = await salesAPI.buy(token!, payload);
       setReceipt(receipt);
       setResult(`Kupovina uspešna! Račun #${receipt.receiptId}`);
-
-      // posle kupovine refresuj katalog
-      await loadCatalog();
+    setProducts(prev =>
+  prev.map(p =>
+    p.id === productId
+      ? { ...p, quantity: p.quantity - quantity }
+      : p
+  )
+);
+           
+     
     } catch (e: any) {
-      setError(e.message ?? "Greška pri kupovini");
-    } finally {
+  const msg =
+    e?.response?.data?.message ||
+    e?.response?.data ||
+    "Greška pri kupovini";
+
+  setError(msg);
+}finally {
       setLoadingBuy(false);
     }
   }

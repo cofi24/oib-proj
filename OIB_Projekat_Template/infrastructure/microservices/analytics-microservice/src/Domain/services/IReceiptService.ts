@@ -1,5 +1,5 @@
-import { CreateFiscalReceiptDTO } from "../DTOs/CreateFiscalReceiptDTO";
-import { FiscalReceiptDTO } from "../DTOs/FiscalReceiptDTO";
+import { CreateFiscalReceiptDTO } from "../DTOs/CreateReceiptDTO";
+import { FiscalReceiptDTO } from "../DTOs/ReceiptDTO";
 
 export interface IFiscalReceiptService {
   create(data: CreateFiscalReceiptDTO): Promise<FiscalReceiptDTO>;

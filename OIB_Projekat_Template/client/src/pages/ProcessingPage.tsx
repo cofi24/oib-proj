@@ -22,9 +22,10 @@ export const ProcessingPage: React.FC<Props> = ({
   const navigate = useNavigate();
   const { token } = useAuth();
 
-  const [perfumeType, setPerfumeType] = useState("Lavanda");
+  const [perfumeType, setPerfumeType] = useState("");
   const [bottleCount, setBottleCount] = useState(1);
   const [bottleVolumeMl, setBottleVolumeMl] = useState<150 | 250>(150);
+  const [perfumeName, setPerfumeName] = useState("");
 
   const [amount, setBatches] = useState<AmountDTO[]>([]);
   const [logs, setLogs] = useState<AuditLogDTO[]>([]);
@@ -50,21 +51,44 @@ export const ProcessingPage: React.FC<Props> = ({
     [logs]
   );
 
-  const onStart = async () => {
-    if (!token) {
-      setError("Niste ulogovani.");
-      return;
-    }
-    setError(null);
+ const onStart = async () => {
+  if (!token) {
+    setError("Niste ulogovani.");
+    return;
+  }
+  setError(null);
 
-    await processingAPI.startProcessingBatch(token, {
-      perfumeType,
-      bottleCount,
-      bottleVolumeMl,
-    });
+  await processingAPI.startProcessingBatch(token, {
+    perfumeType,
+    bottleCount,
+    bottleVolumeMl,
+  });
 
-    refresh();
-  };
+  // ⬇️ SAČEKAJ refresh da dobiješ novi ID
+  const batches = await processingAPI.getProcessedAmounts(token);
+
+  const newest = batches[0]; // pretpostavka: backend vraća newest first
+
+  if (newest && perfumeName) {
+    const map = JSON.parse(
+      localStorage.getItem("perfumeNameMap") || "{}"
+    );
+    map[newest.id] = perfumeName;
+    localStorage.setItem("perfumeNameMap", JSON.stringify(map));
+  }
+
+  setBatches(batches);
+};
+const displayAmount = useMemo(() => {
+  const map = JSON.parse(
+    localStorage.getItem("perfumeNameMap") || "{}"
+  );
+
+  return amount.map(a => ({
+    ...a,
+    perfumeName: map[a.id], // može biti undefined
+  }));
+}, [amount]);
 
   return (
     <div style={{ padding: 30 }}>
@@ -107,6 +131,8 @@ export const ProcessingPage: React.FC<Props> = ({
 
       
       <Form
+      perfumeName={perfumeName}
+      setPerfumeName={setPerfumeName}
         perfumeType={perfumeType}
         setPerfumeType={setPerfumeType}
         bottleCount={bottleCount}
@@ -120,7 +146,7 @@ export const ProcessingPage: React.FC<Props> = ({
 
       
       <div >
-        <Table amount={amount} />
+        <Table amount={displayAmount} />
         <Log logs={processingLogs} />
       </div>
 

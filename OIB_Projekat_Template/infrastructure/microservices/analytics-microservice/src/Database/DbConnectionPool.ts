@@ -2,8 +2,8 @@ import "reflect-metadata";
 import { DataSource } from "typeorm";
 import dotenv from "dotenv";
 
-import { FiscalReceipt } from "../Domain/models/FiscalReceipt";
-import { FiscalReceiptItem } from "../Domain/models/FiscalReceiptItem";
+import { FiscalReceipt } from "../Domain/models/Receipt";
+import { FiscalReceiptItem } from "../Domain/models/ReceiptItem";
 import { SalesAnalysisReport } from "../Domain/models/SalesAnalysis";
 
 dotenv.config();

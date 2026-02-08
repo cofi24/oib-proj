@@ -1,6 +1,6 @@
 import {Router,Request,Response} from "express";
-import { ISalesAnalysisService } from "../../Domain/services/ISalesAnalysisService";
-import { CreateSalesAnalysisReportDTO } from "../../Domain/DTOs/CreateSalesAnalysisReport.DTO";
+import { ISalesAnalysisService } from "../../Domain/services/IAnalysisService";
+import { CreateSalesAnalysisReportDTO } from "../../Domain/DTOs/CreateReportDTO";
 export class SalesAnalysisController {
   private readonly router = Router();
 

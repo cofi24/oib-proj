@@ -1,7 +1,5 @@
 import { Router, Request, Response } from "express";
 import { IAuditLogService } from "../../Domain/services/IAuditLogService";
-import { validateCreateAuditLog } from "../validators/CreateAuditLogValidator";
-import { validateUpdateAuditLog } from "../validators/UpdateAuditLogvalidator";
 
 export class AuditLogController {
   private readonly router = Router();
@@ -31,22 +29,16 @@ export class AuditLogController {
   };
 
   private create = async (req: Request, res: Response) => {
-    const validation = validateCreateAuditLog(req.body);
-
-    if (!validation.success) {
-      return res.status(400).json({ message: validation.message });
-    }
+   
 
     const result = await this.service.create(req.body);
     res.status(201).json(result);
   };
 
   private update = async (req: Request, res: Response) => {
-    const validation = validateUpdateAuditLog(req.body);
+   
 
-    if (!validation.success) {
-      return res.status(400).json({ message: validation.message });
-    }
+  
 
     const result = await this.service.update(
       Number(req.params.id),

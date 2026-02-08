@@ -3,6 +3,9 @@ import React from "react";
 type Props = {
   perfumeType: string;
   setPerfumeType: (v: string) => void;
+  perfumeName: string;
+  setPerfumeName: (v: string) => void;
+
   bottleCount: number;
   setBottleCount: (v: number) => void;
   bottleVolumeMl: 150 | 250;
@@ -14,6 +17,8 @@ type Props = {
 export const Form: React.FC<Props> = ({
   perfumeType,
   setPerfumeType,
+  perfumeName,
+  setPerfumeName,
   bottleCount,
   setBottleCount,
   bottleVolumeMl,
@@ -29,12 +34,20 @@ export const Form: React.FC<Props> = ({
       <h3 style={styles.title}>
         🧴 Prerada u Parfeme
       </h3>
-
+            <div style={styles.inputGroup}>
+          <input
+            value={perfumeName}
+            onChange={e => setPerfumeName(e.target.value)}
+            placeholder="Naziv parfema (npr. Lavender Dream)"
+            autoComplete="off"
+            style={styles.input}
+          />
+      </div>
       <div style={styles.inputGroup}>
         <input
           value={perfumeType}
           onChange={e => setPerfumeType(e.target.value)}
-          placeholder="Tip parfema (npr. Lavanda)"
+          placeholder="Tip biljke (npr. Lavanda)"
           autoComplete="off"
           style={styles.input}
         />

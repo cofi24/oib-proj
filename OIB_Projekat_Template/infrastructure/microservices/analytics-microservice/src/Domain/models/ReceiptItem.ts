@@ -1,5 +1,5 @@
 import {Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn} from "typeorm";
-import { FiscalReceipt } from "./FiscalReceipt";
+import { FiscalReceipt } from "./Receipt";
 
 @Entity("receipt_items")
 export class FiscalReceiptItem {

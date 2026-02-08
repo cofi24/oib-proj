@@ -4,7 +4,7 @@ import { HarvestDTO } from "../DTOs/ProductionDTOs/HarvestDTO";
 import { OilDTO } from "../DTOs/ProductionDTOs/OilDTO";
 
 export interface IProductionGateService {
-  // Plants
+
   getAllPlants(token?: string): Promise<PlantDTO[]>;
  plant( data: PlantCreateDTO, token?: string ): Promise<PlantDTO>;
  adjustOilStrength(data: OilDTO,token?: string): Promise<PlantDTO>;

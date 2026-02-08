@@ -1,8 +1,8 @@
-import { CreateSalesAnalysisReportDTO } from "../DTOs/CreateSalesAnalysisReport.DTO";
-import { SalesAnalysisReportDTO } from "../DTOs/SalesAnalysisReportDTO";
-import { SalesSummaryDTO } from "../DTOs/SalesSummaryDTO";
-import { SalesTrendDTO } from "../DTOs/SalesTrendDTO";
-import { TopPerfumeDTO } from "../DTOs/TopPerfumeDTO";
+import { CreateSalesAnalysisReportDTO } from "../DTOs/CreateReportDTO";
+import { SalesAnalysisReportDTO } from "../DTOs/SalesReportDTO";
+import { SalesSummaryDTO } from "../DTOs/SummaryDTO";
+import { SalesTrendDTO } from "../DTOs/TrendDTO";
+import { TopPerfumeDTO } from "../DTOs/TopDTO";
 
 export interface ISalesAnalysisService {
   createReport(data: CreateSalesAnalysisReportDTO): Promise<SalesAnalysisReportDTO>;
