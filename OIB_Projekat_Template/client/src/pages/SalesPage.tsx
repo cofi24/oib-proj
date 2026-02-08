@@ -38,56 +38,76 @@ export function SalesPage({ salesAPI }: Props) {
 
   /* ---------- LOAD CATALOG ---------- */
   async function loadCatalog() {
-    try {
-      setLoadingCatalog(true);
-      setError(null);
+  try {
+    setLoadingCatalog(true);
+    setError(null);
 
-      const query: GetCatalogDTO = {};
-      const data = await salesAPI.getCatalog(token!, query);
+    const query: GetCatalogDTO = {};
+    const data = await salesAPI.getCatalog(token!, query);
 
+    // Učitaj lokalne izmene ako postoje
+    const localUpdates = localStorage.getItem('productUpdates');
+    if (localUpdates) {
+      const updates = JSON.parse(localUpdates);
+      const merged = data.map(p => ({
+        ...p,
+        quantity: updates[p.id] !== undefined ? updates[p.id] : p.quantity
+      }));
+      setProducts(merged);
+    } else {
       setProducts(data);
-    } catch (e: any) {
-      setError(e.message ?? "Greška pri učitavanju kataloga");
-    } finally {
-      setLoadingCatalog(false);
     }
+  } catch (e: any) {
+    setError(e.message ?? "Greška pri učitavanju kataloga");
+  } finally {
+    setLoadingCatalog(false);
   }
+}
 
-  /* ---------- BUY ---------- */
-  async function onBuy() {
-    try {
-      setLoadingBuy(true);
-      setError(null);
+/* ---------- BUY ---------- */
+async function onBuy() {
+  try {
+    setLoadingBuy(true);
+    setError(null);
 
-      const payload: BuyRequestDTO = {
-        items: [{ productId, quantity }],
-        paymentMethod,
-        saleType,
-      };
+    const payload: BuyRequestDTO = {
+      items: [{ productId, quantity }],
+      paymentMethod,
+      saleType,
+    };
 
-      const receipt = await salesAPI.buy(token!, payload);
-      setReceipt(receipt);
-      setResult(`Kupovina uspešna! Račun #${receipt.receiptId}`);
+    const receipt = await salesAPI.buy(token!, payload);
+    setReceipt(receipt);
+    setResult('Kupovina uspešna! Račun #${receipt.receiptId}');
+
+    // Ažuriraj state
     setProducts(prev =>
-  prev.map(p =>
-    p.id === productId
-      ? { ...p, quantity: p.quantity - quantity }
-      : p
-  )
-);
-           
-     
-    } catch (e: any) {
-  const msg =
-    e?.response?.data?.message ||
-    e?.response?.data ||
-    "Greška pri kupovini";
+      prev.map(p =>
+        p.id === productId
+          ? { ...p, quantity: p.quantity - quantity }
+          : p
+      )
+    );
 
-  setError(msg);
-}finally {
-      setLoadingBuy(false);
+    // Sačuvaj u localStorage
+    const localUpdates = JSON.parse(localStorage.getItem('productUpdates')||  '{}');
+    const currentProduct = products.find(p => p.id === productId);
+    if (currentProduct) {
+      localUpdates[productId] = currentProduct.quantity - quantity;
+      localStorage.setItem('productUpdates', JSON.stringify(localUpdates));
     }
+
+  } catch (e: any) {
+    const msg =
+      e?.response?.data?.message 
+      e?.response?.data ||
+      "Greška pri kupovini";
+
+    setError(msg);
+  } finally {
+    setLoadingBuy(false);
   }
+}
 
   /* ---------- INIT ---------- */
   useEffect(() => {

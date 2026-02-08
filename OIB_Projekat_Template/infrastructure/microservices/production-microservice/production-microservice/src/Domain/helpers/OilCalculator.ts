@@ -8,7 +8,7 @@ export class OilCalculator {
     }
 
     const overflow = processedOil - this.MAX_OIL;
-    const factor = overflow;
+    const factor = overflow*0.5;
 
     return Math.round(originalOil * factor * this.PRECISION) / this.PRECISION;
   }

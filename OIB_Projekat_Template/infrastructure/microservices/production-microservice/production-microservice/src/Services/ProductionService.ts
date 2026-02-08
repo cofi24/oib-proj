@@ -8,7 +8,7 @@ import { HarvestDTO } from "../Domain/DTOs/HarvestDTO";
 import { PlantDTO } from "../Domain/DTOs/PlantDTO";
 import { PlantStatus } from "../Domain/enums/PlantStatus";
 import { AuditLogType } from "../Domain/enums/AuditLogType";
-import { OilCalculator } from "../Domain/helpers/OilStrengthCalculator";
+import { OilCalculator } from "../Domain/helpers/OilCalculator";
 
 
 export class ProductionService implements IProductionService {

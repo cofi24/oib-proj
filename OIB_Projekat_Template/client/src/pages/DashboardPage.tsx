@@ -32,13 +32,7 @@ export const DashboardPage: React.FC = () => {
       path: "/processing",
       roles: ["SELLER", "SALES_MANAGER"],
     },
-    {
-      id: "storage",
-      title: "Skladištenje",
-      description: "Upravljanje skladištima i slanje paketa.",
-      path: "/storage",
-      roles: ["SELLER", "SALES_MANAGER"],
-    },
+
     {
       id: "sales",
       title: "Prodaja",
